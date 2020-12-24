@@ -1,0 +1,6 @@
+node_modules
+dist
+.babelrc.js
+.eslintrc.js
+.prettierrc.js
+.paths.js

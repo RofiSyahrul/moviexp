@@ -1,0 +1,133 @@
+{
+  "name": "moviexp",
+  "version": "0.0.1",
+  "description": "explore movies from omdb API",
+  "sideEffects": false,
+  "scripts": {
+    "start": "NODE_ENV=development TS_NODE_PROJECT=tsconfig.node.json webpack serve --config config/webpack.config.ts --env env=dev",
+    "build": "NODE_ENV=production TS_NODE_PROJECT=tsconfig.node.json webpack --config config/webpack.config.ts --env env=prod",
+    "build:local": "BUILD_ENV=local npm run build",
+    "logic-test": "ts-node scripts/logic-test",
+    "lint": "eslint . --ext .js,.ts,.tsx -f table",
+    "cm": "cz",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RofiSyahrul/moviexp.git"
+  },
+  "keywords": [
+    "movies",
+    "omdb API",
+    "explore movies",
+    "react",
+    "redux",
+    "typescript",
+    "react hooks"
+  ],
+  "author": "Rofi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/RofiSyahrul/moviexp/issues"
+  },
+  "homepage": "https://github.com/RofiSyahrul/moviexp#readme",
+  "devDependencies": {
+    "@babel/core": "^7.12.10",
+    "@babel/plugin-proposal-class-properties": "^7.12.1",
+    "@babel/plugin-proposal-optional-chaining": "^7.12.7",
+    "@babel/plugin-syntax-optional-chaining": "^7.8.3",
+    "@babel/preset-env": "^7.12.11",
+    "@babel/preset-react": "^7.12.10",
+    "@commitlint/cli": "^11.0.0",
+    "@commitlint/config-conventional": "^11.0.0",
+    "@types/compression-webpack-plugin": "^6.0.2",
+    "@types/copy-webpack-plugin": "^6.3.0",
+    "@types/dotenv": "^8.2.0",
+    "@types/node": "^14.14.14",
+    "@types/react": "^17.0.0",
+    "@types/react-dom": "^17.0.0",
+    "@types/react-router-dom": "^5.1.6",
+    "@types/styled-components": "^5.1.7",
+    "@types/terser-webpack-plugin": "^4.1.0",
+    "@types/webpack": "^4.41.25",
+    "@types/webpack-dev-server": "^3.11.1",
+    "@types/workbox-webpack-plugin": "^5.1.5",
+    "@typescript-eslint/eslint-plugin": "^4.11.0",
+    "@typescript-eslint/parser": "^4.11.0",
+    "babel-loader": "^8.2.2",
+    "babel-plugin-module-resolver": "^4.1.0",
+    "babel-plugin-syntax-dynamic-import": "^6.18.0",
+    "babel-preset-react-app": "^10.0.0",
+    "clean-webpack-plugin": "^3.0.0",
+    "commitizen": "^4.2.2",
+    "compression-webpack-plugin": "^7.1.0",
+    "copy-webpack-plugin": "^7.0.0",
+    "core-js": "^3.8.1",
+    "cz-conventional-changelog": "^3.3.0",
+    "dotenv": "^8.2.0",
+    "eslint": "^7.16.0",
+    "eslint-config-airbnb": "^18.2.1",
+    "eslint-config-airbnb-typescript": "^12.0.0",
+    "eslint-config-prettier": "^7.1.0",
+    "eslint-import-resolver-babel-module": "^5.2.0",
+    "eslint-import-resolver-typescript": "^2.3.0",
+    "eslint-import-resolver-webpack": "^0.13.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jsx-a11y": "^6.4.1",
+    "eslint-plugin-prettier": "^3.3.0",
+    "eslint-plugin-react": "^7.21.5",
+    "eslint-plugin-react-hooks": "^4.2.0",
+    "eslint-webpack-plugin": "^2.4.1",
+    "file-loader": "^6.2.0",
+    "html-webpack-plugin": "^4.5.0",
+    "husky": "^4.3.6",
+    "lint-staged": "^10.5.3",
+    "preload-webpack-plugin": "^3.0.0-beta.4",
+    "prettier": "^2.2.1",
+    "terser-webpack-plugin": "^1.4.5",
+    "ts-loader": "^8.0.12",
+    "ts-node": "^9.1.1",
+    "tsconfig-paths": "^3.9.0",
+    "typescript": "^4.1.3",
+    "webpack": "^5.11.0",
+    "webpack-cli": "^4.2.0",
+    "webpack-dev-server": "^3.11.0",
+    "webpack-merge": "^5.7.3",
+    "workbox-webpack-plugin": "^6.0.2"
+  },
+  "dependencies": {
+    "axios": "^0.21.1",
+    "goods-core": "^1.6.15",
+    "goods-ui": "^1.10.10",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "react-fast-compare": "^3.2.0",
+    "react-redux": "^7.2.2",
+    "react-router-dom": "^5.2.0",
+    "redux": "^4.0.5",
+    "redux-thunk": "^2.3.0",
+    "styled-components": "^5.2.1"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
+      "prepare-commit-msg": "exec < /dev/tty && git cz --hook || true"
+    }
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx}": [
+      "eslint -f table"
+    ]
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
+}
