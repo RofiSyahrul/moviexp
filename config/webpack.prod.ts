@@ -8,9 +8,8 @@ import TerserPlugin from 'terser-webpack-plugin';
 const isLocalBuild = /local/i.test(process.env.BUILD_ENV || '');
 
 const compressionPlugin = new WebpackCompression({
-  filename(info) {
-    return `${info.path}${info.query}`;
-  },
+  deleteOriginalAssets: true,
+  filename: info => info.file,
   algorithm: 'gzip',
   test: /\.js(\.gz)?(\?.*)?$/,
   minRatio: 1,
