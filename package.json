@@ -2,7 +2,9 @@
   "name": "moviexp",
   "version": "0.0.1",
   "description": "explore movies from omdb API",
-  "sideEffects": false,
+  "sideEffects": [
+    "dom4"
+  ],
   "scripts": {
     "start": "NODE_ENV=development TS_NODE_PROJECT=tsconfig.node.json webpack serve --config config/webpack.config.ts --env env=dev",
     "build": "NODE_ENV=production TS_NODE_PROJECT=tsconfig.node.json webpack --config config/webpack.config.ts --env env=prod",
@@ -42,10 +44,12 @@
     "@commitlint/config-conventional": "^11.0.0",
     "@types/compression-webpack-plugin": "^6.0.2",
     "@types/copy-webpack-plugin": "^6.3.0",
+    "@types/dom4": "^2.0.1",
     "@types/dotenv": "^8.2.0",
     "@types/node": "^14.14.14",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
+    "@types/react-redux": "^7.1.14",
     "@types/react-router-dom": "^5.1.6",
     "@types/styled-components": "^5.1.7",
     "@types/terser-webpack-plugin": "^4.1.0",
@@ -97,6 +101,7 @@
   },
   "dependencies": {
     "axios": "^0.21.1",
+    "dom4": "^2.1.6",
     "goods-core": "^1.6.15",
     "goods-ui": "^1.10.10",
     "react": "^17.0.1",

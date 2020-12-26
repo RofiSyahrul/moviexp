@@ -57,6 +57,7 @@ const htmlPlugin = new HtmlWebpackPlugin({
     ogImage,
     favicon: '/rho-pi.ico',
     themeColor: theme_color,
+    apiUrl: process.env.BASE_URL,
   },
 });
 

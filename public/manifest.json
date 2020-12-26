@@ -4,8 +4,8 @@
   "description": "Let's explore 100+ movies here",
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#4aabc5",
-  "background_color": "#366091",
+  "theme_color": "#00ab6b",
+  "background_color": "#F5F5F5",
   "icons": [
     {
       "src": "manifest-icon-192.png",

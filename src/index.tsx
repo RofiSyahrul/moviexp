@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 import React from 'react';
 import ReactDOM from 'react-dom';
+import 'dom4';
 import App from './app';
 
 const appNode = document.getElementById('app');
