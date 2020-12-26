@@ -16,7 +16,7 @@ export const appTheme = overrideGoodsTheme({
     black45: '#111111',
   } as ThemeType['colors'],
   breakpoints: {
-    sm: '481px',
+    sm: '360px',
     md: '561px',
     xl: '1081px',
   },

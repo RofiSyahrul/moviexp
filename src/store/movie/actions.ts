@@ -1,35 +1,12 @@
-import axios from 'axios';
+import { fetchMovies, MovieListParam } from '@utils/services';
 
-const request = axios.create({
-  baseURL: BASE_URL,
-  params: { apikey: API_KEY },
-});
-
-interface MovieOverviewRes {
-  Title: string;
-  Year: string;
-  imdbID: string;
-  Type: MovieType;
-  Poster: string;
-}
-
-interface MovieListParam {
-  type?: MovieType;
-  y?: string;
+interface Param extends Pick<MovieListParam, 'type' | 'y'> {
   pageChanged?: boolean;
 }
 
-type MovieListRes =
-  | {
-      Search: MovieOverviewRes[];
-      totalResults: string;
-      Response: 'True';
-    }
-  | { Error: string; Response: 'False' };
-
 const PAGE_LIMIT = 10;
 
-export const fetchMovieList = (params: MovieListParam = {}): Action => (
+export const fetchMovieList = (params: Param = {}): Action => (
   dispatch,
   getState
 ) => {
@@ -40,15 +17,12 @@ export const fetchMovieList = (params: MovieListParam = {}): Action => (
     if (page >= maxPage) return;
   }
   dispatch({ type: 'FETCH_MOVIE_DETAIL_STARTED' });
-  request
-    .get<MovieListRes>('', {
-      params: {
-        s: searchKey,
-        page: pageChanged ? page + 1 : page,
-        ...restParams,
-      },
-    })
-    .then(({ data }) => {
+  fetchMovies({
+    ...restParams,
+    page: pageChanged ? page + 1 : page,
+    s: searchKey,
+  })
+    .then(data => {
       if (data.Response === 'False') {
         throw new Error(data.Error);
       }

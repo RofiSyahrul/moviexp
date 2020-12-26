@@ -1,4 +1,4 @@
-const { alias } = require('./.paths');
+const { alias, src } = require('./.paths');
 
 /** @type {import('@babel/core').TransformOptions} */
 const config = {
@@ -11,6 +11,7 @@ const config = {
       },
     ],
     '@babel/preset-react',
+    '@babel/preset-typescript',
     'goods-core/babel/preset',
     'goods-ui/babel/preset',
   ],
@@ -23,7 +24,8 @@ const config = {
     [
       'module-resolver',
       {
-        root: ['./src'],
+        extensions: ['.ts', '.tsx', '.js'],
+        root: [src],
         alias,
       },
     ],

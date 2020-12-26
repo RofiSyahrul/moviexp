@@ -5,13 +5,12 @@ import PreloadWebpackPlugin from 'preload-webpack-plugin';
 import ESLintPlugin from 'eslint-webpack-plugin';
 import { config } from 'dotenv';
 import { alias, dist, entry, env, root, src } from '../.paths';
-import { keywords } from '../package.json';
+import { keywords, homepage } from '../package.json';
 import { theme_color, name, description } from '../public/manifest.json';
 
 config({ path: env });
 
-const viewport =
-  'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0';
+const viewport = 'width=device-width, initial-scale=1.0, maximum-scale=5.0';
 
 const title = 'Explore movies';
 const favicon = './public/rho-pi.ico';
@@ -106,7 +105,7 @@ const commonConfig: webpack.Configuration = {
     ],
   },
   resolve: {
-    extensions: ['.js', '.ts', '.tsx'],
+    extensions: ['.ts', '.tsx', '.js', 'json'],
     modules: [src, 'node_modules'],
     alias,
   },
@@ -115,10 +114,11 @@ const commonConfig: webpack.Configuration = {
     htmlPlugin,
     new webpack.DefinePlugin({
       __DEV__: process.env.NODE_ENV !== 'production',
+      GITHUB_URL: JSON.stringify(homepage),
       ...constants,
     }),
     new PreloadWebpackPlugin({ rel: 'preload', include: 'initial' }),
-    new ESLintPlugin(),
+    new ESLintPlugin({ extensions: ['.ts', '.tsx', '.js'] }),
   ],
   output: {
     path: dist,

@@ -6,9 +6,12 @@ export interface MovieState {
   searchKey: string;
   page: number;
   totalMovies: number;
+  searchFieldShown: boolean;
 }
 
 type SetSearchKeyAction = ActionMaker<'SET_SEARCH_KEY', { searchKey: string }>;
+
+type ToggleSearchFieldAction = ActionMaker<'TOGGLE_SEARCH_FIELD'>;
 
 type FetchMovieListStartedAction = ActionMaker<'FETCH_MOVIE_LIST_STARTED'>;
 
@@ -36,6 +39,7 @@ type FetchMovieDetailFailedAction = ActionMaker<
 
 export type MovieActionTypes =
   | SetSearchKeyAction
+  | ToggleSearchFieldAction
   | FetchMovieListStartedAction
   | FetchMovieListSuccessAction
   | FetchMovieListFailedAction

@@ -8,6 +8,7 @@ export const initialState: MovieState = {
   page: 1,
   searchKey: 'movie',
   totalMovies: 0,
+  searchFieldShown: false,
 };
 
 export function movieReducer(
@@ -17,7 +18,15 @@ export function movieReducer(
   const { page, movieList } = state;
   switch (action.type) {
     case 'SET_SEARCH_KEY':
-      return { ...state, searchKey: action.payload.searchKey, page: 1 };
+      return {
+        ...state,
+        movieList: [],
+        searchKey: action.payload.searchKey,
+        page: 1,
+        searchFieldShown: false,
+      };
+    case 'TOGGLE_SEARCH_FIELD':
+      return { ...state, searchFieldShown: !state.searchFieldShown };
     case 'FETCH_MOVIE_LIST_STARTED':
     case 'FETCH_MOVIE_DETAIL_STARTED':
       return { ...state, loading: true, error: null };
@@ -29,6 +38,7 @@ export function movieReducer(
           ...state,
           loading: false,
           error: error instanceof Error ? error.message : error,
+          ...(action.type === 'FETCH_MOVIE_LIST_FAILED' && { totalMovies: 0 }),
         };
       }
       return state;

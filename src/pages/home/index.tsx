@@ -17,8 +17,9 @@ const LoadingPlaceholder = memo(() => {
 });
 
 const gTempCol: ResponsiveValue<string> = {
-  xs: '1fr 1fr',
-  lg: 'repeat(4, 1fr)',
+  xs: '0.7fr',
+  sm: '1fr 1fr',
+  md: 'repeat(3, 1fr)',
   xl: 'repeat(5, 1fr)',
 };
 
@@ -28,9 +29,9 @@ const gap: ResponsiveValue<string> = {
 };
 
 const Home = memo(() => {
-  const { movieList, error, loading } = useHome();
+  const { movieList, error, loading, totalMovies } = useHome();
   if (error) {
-    return <h1>{error}</h1>;
+    return <h1 className='error'>{error}</h1>;
   }
   return (
     <Box
@@ -41,7 +42,9 @@ const Home = memo(() => {
       gTempCol={gTempCol}
       gap={gap}
       gAutoFlow='row'
+      fJustify='center'
       id='movie-list-container'
+      className={totalMovies === 1 ? 'one-movie' : ''}
     >
       {movieList.map((movie, i) => (
         <Card key={`${movie.imdbID}-${i}`} {...movie} />

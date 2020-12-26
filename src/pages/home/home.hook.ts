@@ -3,12 +3,25 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchMovieList } from '@store/movie/actions';
 import { MovieState } from '@store/movie/types';
 import { useInfiniteScroll } from '@hooks/infinite-scroll';
+import { useHistory, useLocation } from 'react-router-dom';
+import { parseQs } from '@utils/helpers';
 
-export function useHome(): Pick<MovieState, 'error' | 'loading' | 'movieList'> {
-  const { movieList, loading, error, searchKey, page } = useSelector(
-    state => state.movie
-  );
+export function useHome(): Pick<
+  MovieState,
+  'error' | 'loading' | 'movieList' | 'totalMovies'
+> {
+  const {
+    movieList,
+    loading,
+    error,
+    searchKey,
+    page,
+    totalMovies,
+  } = useSelector(state => state.movie);
+
   const dispatch = useDispatch();
+  const history = useHistory();
+  const { search } = useLocation();
 
   const onNextPage = useCallback(() => {
     dispatch(fetchMovieList({ pageChanged: true }));
@@ -20,10 +33,19 @@ export function useHome(): Pick<MovieState, 'error' | 'loading' | 'movieList'> {
   });
 
   useEffect(() => {
+    const { s } = parseQs<'s', string>(search);
+    if (s && s.length >= 3 && s !== searchKey) {
+      dispatch({ type: 'SET_SEARCH_KEY', payload: { searchKey: s } });
+    } else {
+      history.replace(`?s=${searchKey}`);
+    }
+  }, []);
+
+  useEffect(() => {
     if (page === 1 && searchKey.length >= 3) {
       dispatch(fetchMovieList());
     }
   }, [searchKey, page]);
 
-  return { movieList, loading, error };
+  return { movieList, loading, error, totalMovies };
 }

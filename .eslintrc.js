@@ -99,7 +99,7 @@ module.exports = {
     'import/resolver': {
       node: {
         extensions: ['.ts', '.tsx', '.js', '.jsx', '.d.ts'],
-        moduleDirectory: ['node_modules', 'src/', 'config/', 'pre-build'],
+        moduleDirectory: ['node_modules', 'src/', 'config/', 'scripts/'],
       },
       'babel-module': {
         alias,

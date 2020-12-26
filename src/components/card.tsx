@@ -63,6 +63,7 @@ const Card = memo<CardProps>(props => {
             px='xxs'
             py='xxxs'
             radius='m'
+            bg='black25'
             className={`type-${props.type}`}
           >
             <Text as='span' rule='body' weight='bold' c='white'>
@@ -102,7 +103,10 @@ const Card = memo<CardProps>(props => {
               ))}
             </>
           ) : (
-            <Link to={`/${props.imdbID}`} className='movie-detail-link'>
+            <Link
+              to={`/${props.imdbID}`}
+              className='movie-detail-link line-clamp'
+            >
               <span>{props.title}</span>
             </Link>
           )}

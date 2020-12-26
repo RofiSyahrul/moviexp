@@ -1,6 +1,11 @@
 import { compose } from 'redux';
 import { BaseAction, State } from '@store/index';
 import { ThunkAction, ThunkDispatch } from 'redux-thunk';
+import {
+  FetchOptionsHandler,
+  OptionItem as OptionItemBase,
+  DropdownProps,
+} from 'goods-ui/lib/dropdown/_types';
 
 declare module 'react-redux' {
   // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -14,6 +19,7 @@ declare global {
   const __DEV__: boolean;
   const BASE_URL: string;
   const API_KEY: string;
+  const GITHUB_URL: string;
 
   namespace NodeJS {
     interface ProcessEnv {
@@ -28,6 +34,9 @@ declare global {
     __REDUX_DEVTOOLS_EXTENSION_COMPOSE__: typeof compose;
   }
 
+  type Primitive = string | number | boolean | null | undefined;
+  type General = Primitive | Primitive[] | Record<string, Primitive>;
+
   type Dispatch = ThunkDispatch<State, unknown, BaseAction>;
 
   type Action = ThunkAction<void, State, unknown, BaseAction>;
@@ -41,7 +50,7 @@ declare global {
         payload: S;
       };
 
-  type MovieType = 'movie' | 'series' | 'episode';
+  type MovieType = 'movie' | 'series' | 'episode' | 'game';
 
   interface MovieOverview {
     title: string;
@@ -77,4 +86,8 @@ declare global {
     production: string;
     website: string | null;
   }
+
+  type FetchOptions = FetchOptionsHandler;
+  type OptionItem = OptionItemBase;
+  type OnDropdownSelect = Required<DropdownProps>['onChange'];
 }
