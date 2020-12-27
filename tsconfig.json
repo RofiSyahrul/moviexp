@@ -41,6 +41,7 @@
     "./config/*",
     "./config/**/*",
     "./@types/*",
+    "./jest.config.ts",
     "./scripts/*"
   ],
   "exclude": ["node_modules", "./node_modules", "./node_modules/*", "./dist"],

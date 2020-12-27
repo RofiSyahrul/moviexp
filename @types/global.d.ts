@@ -1,5 +1,8 @@
+/// <reference types="jest" />
+/// <reference types="@types/jest" />
 import { compose } from 'redux';
 import { BaseAction, State } from '@store/index';
+import '@testing-library/jest-dom/extend-expect';
 import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 import {
   FetchOptionsHandler,
