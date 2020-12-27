@@ -39,6 +39,9 @@ export function useHome(): Pick<
     } else {
       history.replace(`?s=${searchKey}`);
     }
+    return () => {
+      dispatch({ type: 'RESET_ERROR' });
+    };
   }, []);
 
   useEffect(() => {

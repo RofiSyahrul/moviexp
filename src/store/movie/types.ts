@@ -37,6 +37,8 @@ type FetchMovieDetailFailedAction = ActionMaker<
   { error: Error | string }
 >;
 
+type ResetErrorAction = ActionMaker<'RESET_ERROR'>;
+
 export type MovieActionTypes =
   | SetSearchKeyAction
   | ToggleSearchFieldAction
@@ -45,4 +47,5 @@ export type MovieActionTypes =
   | FetchMovieListFailedAction
   | FetchMovieDetailStartedAction
   | FetchMovieDetailSuccessAction
-  | FetchMovieDetailFailedAction;
+  | FetchMovieDetailFailedAction
+  | ResetErrorAction;

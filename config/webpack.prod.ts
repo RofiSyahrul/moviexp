@@ -4,8 +4,10 @@ import WebpackCompression from 'compression-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import WorkboxPlugin from 'workbox-webpack-plugin';
 import TerserPlugin from 'terser-webpack-plugin';
+import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 
 const isLocalBuild = /local/i.test(process.env.BUILD_ENV || '');
+const isAnalyze = process.env.ANALYZE === 'true';
 
 const compressionPlugin = new WebpackCompression({
   filename: '[path]',
@@ -13,6 +15,14 @@ const compressionPlugin = new WebpackCompression({
   test: /\.js(\.gz)?(\?.*)?$/,
   minRatio: 1,
   exclude: /(service-worker|sw|workbox-.*)\.js$/,
+});
+
+const analyzer = new BundleAnalyzerPlugin({
+  analyzerMode: 'static',
+  reportFilename: './report.html',
+  openAnalyzer: false,
+  defaultSizes: 'gzip',
+  generateStatsFile: true,
 });
 
 const ejsRegexp = /\.ejs$/;
@@ -45,6 +55,9 @@ function getPlugins(): WebpackPluginInstance[] {
   const plugins = [copyPlugin, swPlugin];
   if (!isLocalBuild) {
     plugins.push(compressionPlugin);
+  }
+  if (isAnalyze) {
+    plugins.push(analyzer);
   }
   return plugins;
 }

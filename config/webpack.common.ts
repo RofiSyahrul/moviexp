@@ -115,6 +115,7 @@ const commonConfig: webpack.Configuration = {
     new webpack.DefinePlugin({
       __DEV__: process.env.NODE_ENV !== 'production',
       GITHUB_URL: JSON.stringify(homepage),
+      DEFAULT_TITLE: JSON.stringify(title),
       ...constants,
     }),
     new PreloadWebpackPlugin({ rel: 'preload', include: 'initial' }),

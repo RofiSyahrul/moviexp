@@ -1,29 +1,25 @@
-import React, { Suspense } from 'react';
+import React, { lazy, Suspense } from 'react';
 import { Route, Switch } from 'react-router-dom';
-import { Box, Text } from 'goods-core';
+import { Spinner } from 'goods-core';
 import Header from '@components/header';
-import Home from './home';
 
-const ComingSoon: React.FC = () => {
-  return (
-    <Box as='main' w h='100%' fAlign='center' fJustify='center' px='s'>
-      <Text as='h1' weight='bold' textAlign='center'>
-        This page is under development
-        <span role='img' aria-label='film'>
-          &nbsp;🎞
-        </span>
-      </Text>
-    </Box>
-  );
-};
+const HomePage = lazy(
+  () => import(/* webpackChunkName: "home-page" */ './home')
+);
+
+const DetailPage = lazy(
+  () => import(/* webpackChunkName: "detail-page" */ './detail')
+);
+
+const fallback = <Spinner c='green50' s='100px' />;
 
 const Page: React.FC = () => {
   return (
-    <Suspense fallback=''>
+    <Suspense fallback={fallback}>
       <Header />
       <Switch>
-        <Route path='/:id' exact component={ComingSoon} />
-        <Route path='/' component={Home} />
+        <Route path='/:id' exact component={DetailPage} />
+        <Route path='/' component={HomePage} />
       </Switch>
     </Suspense>
   );

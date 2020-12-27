@@ -126,14 +126,14 @@ const Searchbox = memo<SearchboxProps>(({ isHomePage }) => {
   const {
     fetchMovieList,
     searchKey,
+    searchPlaceholder,
     onSelect,
     searchValue,
     searchFieldShown,
     totalMovies,
     toggleSearch,
-  } = useSearchbox({
-    isHomePage,
-  });
+    onKeyDown,
+  } = useSearchbox({ isHomePage });
 
   return (
     <Box
@@ -162,9 +162,11 @@ const Searchbox = memo<SearchboxProps>(({ isHomePage }) => {
         w={searchFieldShown ? width : widthOnNotShown}
         id='movie-searchbox'
         label={isHomePage ? 'Search movies here' : 'Search another movie'}
-        placeholder={`e.g: ${searchKey}`}
+        placeholder={searchPlaceholder}
         noOptionsMessage='No movie found'
+        loadingColor='green50'
         prefix={prefix}
+        pl='48px'
         containerProps={
           searchFieldShown ? containerProps : containerPropsOnNotShown
         }
@@ -176,6 +178,7 @@ const Searchbox = memo<SearchboxProps>(({ isHomePage }) => {
         renderOptionItem={renderOptionItem}
         onChange={onSelect}
         value={searchValue}
+        onKeyDown={onKeyDown}
       />
     </Box>
   );

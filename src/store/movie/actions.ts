@@ -1,4 +1,4 @@
-import { fetchMovies, MovieListParam } from '@utils/services';
+import { fetchMovie, fetchMovies, MovieListParam } from '@utils/services';
 
 interface Param extends Pick<MovieListParam, 'type' | 'y'> {
   pageChanged?: boolean;
@@ -43,5 +43,19 @@ export const fetchMovieList = (params: Param = {}): Action => (
     })
     .catch(error => {
       dispatch({ type: 'FETCH_MOVIE_DETAIL_FAILED', payload: { error } });
+    });
+};
+
+export const fetchMovieDetail = (id: string): Action => disaptch => {
+  disaptch({ type: 'FETCH_MOVIE_DETAIL_STARTED' });
+  fetchMovie(id)
+    .then(movieDetail => {
+      disaptch({
+        type: 'FETCH_MOVIE_DETAIL_SUCCESS',
+        payload: { movieDetail },
+      });
+    })
+    .catch(error => {
+      disaptch({ type: 'FETCH_MOVIE_DETAIL_FAILED', payload: { error } });
     });
 };

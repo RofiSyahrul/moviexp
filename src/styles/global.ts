@@ -10,6 +10,7 @@ const globalStyle = css`
     display: flex;
     flex-direction: column;
     justify-content: center;
+    align-items: center;
     width: 100%;
   }
 
@@ -49,6 +50,10 @@ const globalStyle = css`
     margin-right: 6px;
   }
 
+  .grid-col-1-span-2 {
+    grid-column: 1 / span 2;
+  }
+
   ${({ theme }) => {
     const { colors } = theme;
     const {
@@ -58,13 +63,14 @@ const globalStyle = css`
       red80,
       orange70,
       green20,
-      black10,
+      white40,
     } = colors;
     return css`
       .scroll::-webkit-scrollbar-thumb {
         background-color: ${green50};
       }
-      .card {
+      .card,
+      .movie-detail-container {
         .type-movie {
           background-color: ${blue60};
         }
@@ -92,7 +98,7 @@ const globalStyle = css`
         &:hover {
           text-shadow: ${green20} 0px -1px;
           span {
-            background-color: ${black10};
+            background-color: ${white40};
           }
         }
       }

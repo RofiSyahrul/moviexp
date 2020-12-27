@@ -1,8 +1,8 @@
 import React, { memo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import isEqual from 'react-fast-compare';
-import { Box, Skeleton, Text } from 'goods-core';
-import { capitalize } from '@utils/helpers';
+import { Box, Skeleton } from 'goods-core';
+import BasicInfo from '@components/basic-info';
 import LazyImage from '@components/lazy-image';
 
 type CardLoadedProps = MovieOverview & {
@@ -55,35 +55,7 @@ const Card = memo<CardProps>(props => {
         </Box>
       )}
       {!props.loading && (
-        <>
-          <Box
-            posi='absolute'
-            top='4px'
-            left='4px'
-            px='xxs'
-            py='xxxs'
-            radius='m'
-            bg='black25'
-            className={`type-${props.type}`}
-          >
-            <Text as='span' rule='body' weight='bold' c='white'>
-              {capitalize(props.type)}
-            </Text>
-          </Box>
-          <Box
-            posi='absolute'
-            top='4px'
-            right='4px'
-            px='xxs'
-            py='xxxs'
-            radius='m'
-            bg='green80'
-          >
-            <Text as='span' rule='body' c='white'>
-              {props.year}
-            </Text>
-          </Box>
-        </>
+        <BasicInfo type={props.type} year={props.year} context='card' />
       )}
       <Box w pt='50%' posi='relative'>
         <Box

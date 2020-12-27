@@ -58,11 +58,14 @@ export function movieReducer(
     case 'FETCH_MOVIE_DETAIL_SUCCESS':
       return {
         ...state,
+        loading: false,
         movieDetails: {
           ...state.movieDetails,
           [action.payload.movieDetail.imdbID]: action.payload.movieDetail,
         },
       };
+    case 'RESET_ERROR':
+      return { ...state, error: null };
     default:
       return state;
   }

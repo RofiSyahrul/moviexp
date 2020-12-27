@@ -91,3 +91,12 @@ export function numberStringify(
   const name = number > 1 ? pluralForm || `${entity}s` : entity;
   return `${number} ${name}`;
 }
+
+export function formatNumber(value: number | string): string {
+  if (typeof value !== 'number') value = parseFloat(value);
+  if (Number.isNaN(value)) return '';
+  return value.toLocaleString('en-US', {
+    maximumFractionDigits: 2,
+    minimumFractionDigits: 0,
+  });
+}

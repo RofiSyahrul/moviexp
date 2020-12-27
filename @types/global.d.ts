@@ -20,6 +20,7 @@ declare global {
   const BASE_URL: string;
   const API_KEY: string;
   const GITHUB_URL: string;
+  const DEFAULT_TITLE: string;
 
   namespace NodeJS {
     interface ProcessEnv {
@@ -27,6 +28,7 @@ declare global {
       BUILD_ENV: 'local' | 'prod';
       BASE_URL: string;
       API_KEY: string;
+      ANALYZE: string;
     }
   }
 
@@ -81,10 +83,10 @@ declare global {
     metascore: string;
     imdbRating: string;
     imdbVotes: string;
-    dvd: string | null;
-    boxOffice: string | null;
+    dvd: string;
+    boxOffice: string;
     production: string;
-    website: string | null;
+    website: string;
   }
 
   type FetchOptions = FetchOptionsHandler;

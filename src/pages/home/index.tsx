@@ -17,7 +17,7 @@ const LoadingPlaceholder = memo(() => {
 });
 
 const gTempCol: ResponsiveValue<string> = {
-  xs: '0.7fr',
+  xs: '0.8fr',
   sm: '1fr 1fr',
   md: 'repeat(3, 1fr)',
   xl: 'repeat(5, 1fr)',

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { fetchMovies } from '@utils/services';
@@ -12,9 +12,24 @@ interface HookReturn
   extends Pick<MovieState, 'searchKey' | 'searchFieldShown' | 'totalMovies'> {
   fetchMovieList: FetchOptions;
   searchValue: string;
+  searchPlaceholder: string;
   onSelect: OnDropdownSelect;
   toggleSearch(): void;
+  onKeyDown(e: React.KeyboardEvent): void;
 }
+
+const examples = [
+  'avengers',
+  'cinta',
+  'batman',
+  'captain',
+  'doraemon',
+  'iron',
+  'start-up',
+  'kita',
+];
+
+const totalExample = examples.length;
 
 export function useSearchbox({
   isHomePage: isHomePageProp,
@@ -27,6 +42,11 @@ export function useSearchbox({
   const [searchValue, setSearchValue] = useState('');
   const [isHomePage, setHomePage] = useState(isHomePageProp);
 
+  const searchPlaceholder = useMemo(() => {
+    const index = Math.floor(Math.random() * totalExample);
+    return `e.g: ${examples[index] || examples[0]}`;
+  }, [searchFieldShown]);
+
   const toggleSearch = useCallback(() => {
     dispatch({ type: 'TOGGLE_SEARCH_FIELD' });
   }, []);
@@ -34,6 +54,10 @@ export function useSearchbox({
   const onSelect = useCallback<OnDropdownSelect>(
     ({ value }) => {
       setSearchValue(value);
+      const inputEl = document.getElementById('dropdown-async-movie-searchbox');
+      if (inputEl instanceof HTMLInputElement) {
+        inputEl.blur();
+      }
       if (isHomePage) {
         window.scrollTo(0, 0);
         dispatch({ type: 'SET_SEARCH_KEY', payload: { searchKey: value } });
@@ -86,6 +110,23 @@ export function useSearchbox({
     [isHomePage]
   );
 
+  const onKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (
+        isHomePage &&
+        e.key === 'Enter' &&
+        e.target instanceof HTMLInputElement &&
+        e.target.value.length >= 3
+      ) {
+        onSelect({
+          value: e.target.value,
+        } as Parameters<OnDropdownSelect>[0]);
+        e.preventDefault();
+      }
+    },
+    [onSelect, isHomePage]
+  );
+
   useEffect(() => {
     setHomePage(isHomePageProp);
     setSearchValue('');
@@ -94,10 +135,12 @@ export function useSearchbox({
   return {
     fetchMovieList,
     searchKey,
+    searchPlaceholder,
     onSelect,
     searchValue,
     searchFieldShown,
     toggleSearch,
     totalMovies,
+    onKeyDown,
   };
 }
