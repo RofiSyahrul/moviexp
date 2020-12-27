@@ -1,31 +1,47 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 export interface LazyImageHookProps {
   src: string;
   setVisible?: React.Dispatch<React.SetStateAction<boolean>>;
+  onClick?(e: React.MouseEvent<HTMLImageElement>): void;
 }
 
 interface HookReturn {
   imageSrc: string;
   isLoading: boolean;
+  isError: boolean;
   imageRef: React.RefObject<HTMLImageElement>;
+  onClick(e: React.MouseEvent<HTMLImageElement>): void;
+  onError(): void;
 }
 
 const placeholder =
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mO8+B8AAqcB0ialKdoAAAAASUVORK5CYII=';
 
-export function handleError(e: React.SyntheticEvent<HTMLImageElement>): void {
-  e.currentTarget.src = require('@img/no-image-poster.png');
-}
-
 export function useLazyImage({
   src,
   setVisible = () => {},
+  onClick: onClickProp,
 }: LazyImageHookProps): HookReturn {
   const [imageSrc, setImageSrc] = useState(placeholder);
+  const [isError, setIsError] = useState(false);
   const isLoading = src !== imageSrc;
 
   const imageRef = useRef<HTMLImageElement>(null);
+
+  const onError = useCallback(() => {
+    setIsError(true);
+  }, []);
+
+  const onClick = useCallback(
+    (e: React.MouseEvent<HTMLImageElement>) => {
+      if (isError) return;
+      if (typeof onClickProp === 'function') {
+        onClickProp(e);
+      }
+    },
+    [isError]
+  );
 
   useEffect(() => {
     let observer: IntersectionObserver;
@@ -64,5 +80,5 @@ export function useLazyImage({
     };
   }, [imageRef, src, isLoading]);
 
-  return { imageSrc, isLoading, imageRef };
+  return { imageSrc, isLoading, isError, imageRef, onClick, onError };
 }

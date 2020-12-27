@@ -2,6 +2,7 @@ import React, { memo } from 'react';
 import { Box } from 'goods-core';
 import { ResponsiveValue } from '@styled-system/core';
 import Card from '@components/card';
+import { withImagePopup } from '@hoc/image-popup';
 import { useHome } from './home.hook';
 
 const listPlaceholder = Array.from({ length: 10 }, (_, i) => i);
@@ -56,4 +57,8 @@ const Home = memo(() => {
 
 Home.displayName = 'Home';
 
-export default Home;
+const HomeEnhanced = withImagePopup(Home);
+
+HomeEnhanced.displayName = 'HomeWithImagePopup';
+
+export default HomeEnhanced;

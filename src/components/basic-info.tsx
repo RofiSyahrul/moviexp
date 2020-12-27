@@ -16,12 +16,13 @@ const BasicInfo = memo<BasicInfoProps>(({ year, type, context }) => {
         py='xxxs'
         radius='m'
         bg='black25'
+        c='white'
         className={`type-${type}`}
         {...(isCard
           ? { posi: 'absolute', top: '4px', left: '4px' }
           : { mr: 'xxxs' })}
       >
-        <Text as='span' rule='body' weight='bold' c='white'>
+        <Text as='span' rule='body' weight='bold' c='inherit'>
           {capitalize(type)}
         </Text>
       </Box>

@@ -64,6 +64,7 @@ const globalStyle = css`
       orange70,
       green20,
       white40,
+      black30,
     } = colors;
     return css`
       .scroll::-webkit-scrollbar-thumb {
@@ -75,6 +76,7 @@ const globalStyle = css`
           background-color: ${blue60};
         }
         .type-series {
+          color: ${black30};
           background-color: ${orange70};
         }
         .type-episode {

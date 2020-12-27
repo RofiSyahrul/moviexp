@@ -51,7 +51,7 @@ const SearchSummary = memo<SearchSummaryProps>(
           fSize='18px'
           textAlign='center'
         >
-          {numberStringify(totalMovies, 'movie')}
+          {numberStringify(totalMovies, 'result')}
         </Text>
       </Box>
     );

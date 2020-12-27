@@ -4,6 +4,7 @@ import isEqual from 'react-fast-compare';
 import { Box, Skeleton } from 'goods-core';
 import BasicInfo from '@components/basic-info';
 import LazyImage from '@components/lazy-image';
+import { useImagePopup } from '@hoc/image-popup';
 
 type CardLoadedProps = MovieOverview & {
   loading?: false;
@@ -17,6 +18,8 @@ type CardProps = CardLoadedProps | CardLoadingProps;
 
 const Card = memo<CardProps>(props => {
   const [visible, setVisible] = useState(false);
+  const { openImagePopup } = useImagePopup();
+
   return (
     <Box
       w
@@ -51,6 +54,8 @@ const Card = memo<CardProps>(props => {
             objectFit='cover'
             setVisible={setVisible}
             radius='inherit'
+            cursor='pointer'
+            onClick={openImagePopup}
           />
         </Box>
       )}
