@@ -5,7 +5,11 @@ import vercel from '@astrojs/vercel/serverless';
 import { defineConfig } from 'astro/config';
 import dotenv from 'dotenv';
 
-import { assetsHashing, globalInjector } from './integrations';
+import {
+  assetsHashing,
+  globalInjector,
+  manifestGenerator,
+} from './integrations';
 
 dotenv.config();
 const isVercel = process.env.DEPLOYMENT_PLATFORM === 'vercel';
@@ -29,6 +33,7 @@ export default defineConfig({
     tailwind(),
     assetsHashing(),
     globalInjector(),
+    manifestGenerator(),
   ],
   output: 'server',
   scopedStyleStrategy: 'class',
