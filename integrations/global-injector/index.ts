@@ -14,6 +14,9 @@ export function globalInjector(): AstroIntegration {
         const viteConfig: ViteUserConfig = {
           define: {
             'import.meta.env.KEYWORDS': JSON.stringify(pkg.keywords),
+            'import.meta.env.REPOSITORY_URL': JSON.stringify(
+              pkg.repository.url,
+            ),
           },
         };
 

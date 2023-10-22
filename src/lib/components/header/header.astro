@@ -1,0 +1,135 @@
+---
+import { Image } from 'astro:assets';
+
+import GithubIcon from '$lib/images/github-icon.png';
+
+import SearchBox from './components/search-box/search-box.svelte';
+import SearchSummary from './components/search-summary.astro';
+
+interface Props {
+  totalSearchResult?: number;
+}
+
+const { totalSearchResult = 0 } = Astro.props;
+---
+
+<div class='header-container'>
+  <header data-search-box-shown='false'>
+    <nav>
+      <a
+        href={import.meta.env.REPOSITORY_URL}
+        target='_blank'
+        title='Repository'
+      >
+        <Image
+          alt='GitHub Icon'
+          loading='eager'
+          src={GithubIcon}
+          width={96}
+          height={96}
+        />
+        <span class='visually-hidden'>Repository</span>
+      </a>
+    </nav>
+
+    <div class='search-container'>
+      {totalSearchResult > 0 && <SearchSummary {totalSearchResult} />}
+      <SearchBox
+        label='Search movies here'
+        client:load
+        transition:persist
+      />
+    </div>
+  </header>
+</div>
+
+<style lang='scss'>
+  .header-container {
+    --header-height: 84px;
+
+    width: 100%;
+    margin-top: var(--header-height);
+  }
+
+  header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: var(--z-index-app-bar);
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    height: var(--header-height);
+    padding: 0 16px;
+    background-color: var(--color-neutral-00);
+    box-shadow: var(--shadow-high);
+    transition-property: width, padding;
+    transition-duration: 300ms;
+    transition-timing-function: ease-in;
+  }
+
+  nav {
+    --size: 32px;
+    width: var(--size);
+    height: var(--size);
+    transition: inherit;
+  }
+
+  a {
+    display: block;
+  }
+
+  a :global(img) {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+  }
+
+  .search-container {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: flex-end;
+    transition: inherit;
+  }
+
+  @include search-box-shown {
+    nav {
+      --size: 0px;
+    }
+  }
+
+  @include lg {
+    .header-container {
+      --header-height: 96px;
+    }
+
+    header {
+      padding: 0 32px;
+    }
+
+    nav {
+      --size: 48px;
+    }
+
+    @include search-box-shown {
+      nav {
+        --size: 48px;
+      }
+    }
+  }
+</style>
+
+<script>
+  import { isSearchBoxShown } from '$lib/stores/search';
+
+  const header = document.querySelector(
+    'div.header-container > header',
+  );
+
+  isSearchBoxShown.subscribe(isShown => {
+    header?.setAttribute('data-search-box-shown', `${isShown}`);
+  });
+</script>

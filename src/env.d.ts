@@ -13,6 +13,7 @@ declare global {
     readonly API_KEY: string;
     readonly API_URL: string;
     readonly KEYWORDS: string[];
+    readonly REPOSITORY_URL: string;
   }
 
   interface ImportMeta {

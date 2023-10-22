@@ -1,0 +1,29 @@
+$screen-sm: 360px;
+$screen-md: 540px;
+$screen-lg: 768px;
+
+@mixin sm {
+  @media (min-width: #{$screen-sm}) {
+    @content;
+  }
+}
+
+@mixin md {
+  @media (min-width: #{$screen-md}) {
+    @content;
+  }
+}
+
+@mixin lg {
+  @media (min-width: #{$screen-lg}) {
+    @content;
+  }
+}
+
+@mixin search-box-shown {
+  :global(
+      div.header-container > header[data-search-box-shown='true']
+    ) {
+    @content;
+  }
+}

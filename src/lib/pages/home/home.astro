@@ -1,14 +1,21 @@
 ---
-// import Header from '$lib/components/header/header.astro';
+import Header from '$lib/components/header/header.astro';
 
 import type { HomeProps } from './home.server';
 
 type Props = HomeProps;
 
 const { movieListResponse } = Astro.props;
+
+const totalSearchResult =
+  movieListResponse.Response === 'True'
+    ? parseInt(movieListResponse.totalResults)
+    : 0;
 ---
 
-<!-- <Header /> -->{
+<Header {totalSearchResult} />
+
+{
   movieListResponse.Response === 'False' ? (
     <h1>{movieListResponse.Error}</h1>
   ) : (

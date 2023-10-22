@@ -37,4 +37,13 @@ export default defineConfig({
   ],
   output: 'server',
   scopedStyleStrategy: 'class',
+  vite: {
+    css: {
+      preprocessorOptions: {
+        scss: {
+          additionalData: `@import '$lib/styles/mixins.scss';`,
+        },
+      },
+    },
+  },
 });

@@ -1,0 +1,69 @@
+---
+import { SEARCH_QUERY_KEY } from '$lib/constants/search';
+import stringifyNumber from '$lib/utils/stringify-number';
+
+interface Props {
+  totalSearchResult: number;
+}
+
+const { totalSearchResult } = Astro.props;
+
+const searchKey = Astro.url.searchParams.get(SEARCH_QUERY_KEY) ?? '';
+const title = `Search result for "${searchKey}"`;
+---
+
+<div>
+  <span class='line-clamp-2' {title}>{title}</span>
+  <strong>{stringifyNumber(totalSearchResult, 'result')}</strong>
+</div>
+
+<style lang='scss'>
+  div {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+    padding: 0 8px;
+    font-weight: 600;
+    transition: none;
+  }
+
+  span {
+    color: var(--color-neutral-20);
+    font-size: 14px;
+  }
+
+  strong {
+    color: var(--color-neutral-30);
+    font-size: 18px;
+  }
+
+  span,
+  strong {
+    letter-spacing: 0px;
+    line-height: 20px;
+    text-align: center;
+  }
+
+  @include search-box-shown {
+    div {
+      flex: 0;
+      width: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+  }
+
+  @include lg {
+    @include search-box-shown {
+      div {
+        width: fit-content;
+        padding: 0 8px;
+        flex: 1;
+      }
+    }
+  }
+</style>
