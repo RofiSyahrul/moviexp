@@ -1,1 +1,30 @@
-<div>Homepage</div>
+---
+// import Header from '$lib/components/header/header.astro';
+
+import type { HomeProps } from './home.server';
+
+type Props = HomeProps;
+
+const { movieListResponse } = Astro.props;
+---
+
+<!-- <Header /> -->{
+  movieListResponse.Response === 'False' ? (
+    <h1>{movieListResponse.Error}</h1>
+  ) : (
+    <main>
+      <script
+        define:vars={{
+          totalSearchResult: movieListResponse.totalResults,
+        }}
+      >
+        window.__TOTAL_SEARCH_RESULT__ =
+        Number.parseInt(totalSearchResult);
+      </script>
+
+      {movieListResponse.Search.map(movie => (
+        <pre>{JSON.stringify(movie, null, 2)}</pre>
+      ))}
+    </main>
+  )
+}

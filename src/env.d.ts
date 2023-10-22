@@ -19,6 +19,15 @@ declare global {
     readonly env: ImportMetaEnv;
   }
 
+  interface DocumentEventMap {
+    'astro:after-swap': Event;
+    'astro:page-load': Event;
+  }
+
+  interface Window {
+    __TOTAL_SEARCH_RESULT__: number;
+  }
+
   interface Array<T> {
     /**
      * Determines whether an array includes a certain element, returning true or false as appropriate.

@@ -1,8 +1,12 @@
 ---
 import Document from '$lib/_document.astro';
 import Home from '$lib/pages/home/home.astro';
+import { getServerResponse } from '$lib/pages/home/home.server';
+
+const response = await getServerResponse(Astro);
+if (response instanceof Response) return response;
 ---
 
 <Document>
-  <Home />
+  <Home {...response.props} />
 </Document>

@@ -1,12 +1,12 @@
 # Demo
 
-[https://moviexp-rofi.netlify.app](https://moviexp-rofi.netlify.app)
+[https://moviexp.rofi.link](https://moviexp.rofi.link)
 
 # Run in development mode
 
 1. Clone this repo
-2. Run `npm install` in the root directory of this project
-3. Run `npm start`
+2. Run `pnpm install` in the root directory of this project
+3. Run `pnpm dev`
 
 # Run my solution of logic-test
 
