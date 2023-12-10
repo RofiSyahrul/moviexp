@@ -138,15 +138,16 @@
     color: var(--color-neutral-05);
     background-color: rgb(var(--rgb-neutral-40), 0.5);
     box-shadow: var(--shadow-low);
-    border-radius: 0;
   }
 
   .slider__prev {
     left: 0;
+    border-radius: 0 8px 8px 0;
   }
 
   .slider__next {
     right: 0;
+    border-radius: 8px 0 0 8px;
   }
 
   .slider__prev:disabled,

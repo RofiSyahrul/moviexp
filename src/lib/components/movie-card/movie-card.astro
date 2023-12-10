@@ -1,10 +1,11 @@
 ---
 import { Image } from 'astro:assets';
 
+import Label from '$lib/components/label.svelte';
 import NoImagePoster from '$lib/images/no-image-poster.png';
 import type { MovieOverview } from '$lib/types/movie';
 
-import { buildMovieTitle } from './utils';
+import { buildMovieTitle, getMovieGenres } from './utils';
 
 interface Props {
   isLazyImage: boolean;
@@ -13,12 +14,13 @@ interface Props {
 
 const { isLazyImage, movie } = Astro.props;
 
-const { original_title, title, poster_path } = movie;
+const { genre_ids, original_title, title, poster_path } = movie;
 
 const IMAGE_WIDTH = 250;
 const IMAGE_HEIGHT = 375;
 
 const movieTitle = buildMovieTitle(title, original_title);
+const genres = getMovieGenres(genre_ids);
 ---
 
 <div class='movie-card'>
@@ -45,13 +47,25 @@ const movieTitle = buildMovieTitle(title, original_title);
       />
     )
   }
-  <p
-    class:list={[
-      poster_path ? 'visually-hidden' : 'movie-card__title',
-    ]}
-  >
+
+  <p class={poster_path ? 'visually-hidden' : 'movie-card__title'}>
     {movieTitle}
   </p>
+
+  {
+    genres.length > 0 && (
+      <div class='movie-card__genres'>
+        <div class='visually-hidden'>Genres</div>
+        <ul class='movie-card__genres__list'>
+          {genres.map(genre => (
+            <Label class='line-clamp-1' component='li'>
+              {genre}
+            </Label>
+          ))}
+        </ul>
+      </div>
+    )
+  }
 </div>
 
 <style lang='scss'>
@@ -76,5 +90,20 @@ const movieTitle = buildMovieTitle(title, original_title);
     padding: 8px;
     font-weight: 600;
     text-align: center;
+  }
+
+  .movie-card__genres {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 4px;
+  }
+
+  .movie-card__genres__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 0;
+    list-style: none;
   }
 </style>

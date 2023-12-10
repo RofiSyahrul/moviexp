@@ -1,7 +1,7 @@
 {
   "[astro]": {
     "editor.codeActionsOnSave": {
-      "source.fixAll.eslint": true
+      "source.fixAll.eslint": "always"
     },
     "editor.detectIndentation": false,
     "editor.insertSpaces": true,
@@ -35,8 +35,8 @@
     "src/**/*.less"
   ],
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true,
-    "source.fixAll.tslint": true
+    "source.fixAll.eslint": "always",
+    "source.fixAll.tslint": "always"
   },
   "editor.formatOnSave": true,
   "editor.insertSpaces": true,
