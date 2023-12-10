@@ -1,6 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 
+import NoImagePoster from '$lib/images/no-image-poster.png';
 import type { MovieOverview } from '$lib/types/movie';
 
 import { buildMovieTitle } from './utils';
@@ -21,16 +22,36 @@ const movieTitle = buildMovieTitle(title, original_title);
 ---
 
 <div class='movie-card'>
-  <Image
-    alt={movieTitle}
-    class='movie-card__image'
-    data-tmdb-img='poster'
-    height={IMAGE_HEIGHT}
-    loading={isLazyImage ? 'lazy' : 'eager'}
-    src={poster_path}
-    width={IMAGE_WIDTH}
-  />
-  <p class='visually-hidden'>{movieTitle}</p>
+  {
+    poster_path ? (
+      <Image
+        alt={movieTitle}
+        class='movie-card__image'
+        data-tmdb-img='poster'
+        height={IMAGE_HEIGHT}
+        loading={isLazyImage ? 'lazy' : 'eager'}
+        src={poster_path}
+        width={IMAGE_WIDTH}
+      />
+    ) : (
+      <Image
+        alt={movieTitle}
+        class='movie-card__image'
+        data-tmdb-img='poster'
+        height={IMAGE_HEIGHT}
+        loading={isLazyImage ? 'lazy' : 'eager'}
+        src={NoImagePoster}
+        width={IMAGE_WIDTH}
+      />
+    )
+  }
+  <p
+    class:list={[
+      poster_path ? 'visually-hidden' : 'movie-card__title',
+    ]}
+  >
+    {movieTitle}
+  </p>
 </div>
 
 <style lang='scss'>
@@ -46,5 +67,14 @@ const movieTitle = buildMovieTitle(title, original_title);
     background-color: var(--color-neutral-25);
     object-fit: cover;
     border-radius: 8px;
+  }
+
+  .movie-card__title {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    padding: 8px;
+    font-weight: 600;
+    text-align: center;
   }
 </style>

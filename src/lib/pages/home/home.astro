@@ -6,11 +6,19 @@ import type { HomeProps } from './home.server';
 
 type Props = HomeProps;
 
-const { trendingMovies } = Astro.props;
+const {
+  nowPlayingMovies,
+  popularMovies,
+  trendingMovies,
+  upcomingMovies,
+} = Astro.props;
 ---
 
 <Header />
 
 <main>
   <MovieList movieList={trendingMovies} title='Trending This Week' />
+  <MovieList movieList={nowPlayingMovies} title='Now Playing' />
+  <MovieList movieList={upcomingMovies} title='Upcoming' />
+  <MovieList movieList={popularMovies} title='Popular' />
 </main>
