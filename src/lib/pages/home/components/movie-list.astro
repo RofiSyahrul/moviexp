@@ -14,15 +14,17 @@ const { movieList, title } = Astro.props;
 
 <section>
   <h2 class='font-semibold text-xl'>{title}</h2>
-  <Slider client:load>
-    {
-      movieList.map(movie => (
-        <SliderItem>
-          <MovieCard isLazyImage movie={movie} />
-        </SliderItem>
-      ))
-    }
-  </Slider>
+  {
+    movieList.length > 0 && (
+      <Slider client:load>
+        {movieList.map(movie => (
+          <SliderItem>
+            <MovieCard isLazyImage movie={movie} />
+          </SliderItem>
+        ))}
+      </Slider>
+    )
+  }
 </section>
 
 <style>

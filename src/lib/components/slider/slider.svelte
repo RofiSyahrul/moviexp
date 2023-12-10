@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
+  import type { TouchEventHandler } from 'svelte/elements';
 
   import ChevronLeft from '$lib/icons/chevron-left.svelte';
 
@@ -7,8 +8,11 @@
   const RATIO = 100;
 
   let activeIndex = 0;
+  let isDragging = false;
   let maxIndex = 0;
   let sliderContent: HTMLDivElement;
+  let startX = 0;
+  let translateXDiff = 0;
 
   function updateMaxIndex() {
     const { clientWidth, scrollWidth } = sliderContent;
@@ -32,6 +36,38 @@
     activeIndex -= 1;
   }
 
+  const handleTouchStart: TouchEventHandler<
+    HTMLDivElement
+  > = event => {
+    isDragging = true;
+    startX = event.touches[0].clientX;
+  };
+
+  const handleTouchMove: TouchEventHandler<
+    HTMLDivElement
+  > = event => {
+    if (!isDragging) return;
+
+    const currentX = event.touches[0].clientX;
+    translateXDiff = currentX - startX;
+  };
+
+  const handleTouchEnd: TouchEventHandler<HTMLDivElement> = event => {
+    if (!isDragging) return;
+
+    const deltaX = startX - event.changedTouches[0].clientX;
+    const threshold = event.currentTarget.clientWidth / 4;
+
+    if (deltaX > threshold && activeIndex < maxIndex) {
+      handleNext();
+    } else if (deltaX < -threshold && activeIndex > 0) {
+      handlePrev();
+    }
+
+    translateXDiff = 0;
+    isDragging = false;
+  };
+
   $: translateX =
     -Math.max(MIN_INDEX, Math.min(activeIndex, maxIndex)) * RATIO;
 </script>
@@ -51,8 +87,11 @@
   <div class="slider__mask">
     <div
       bind:this={sliderContent}
+      on:touchstart={handleTouchStart}
+      on:touchmove={handleTouchMove}
+      on:touchend={handleTouchEnd}
       class="slider__content"
-      style:transform={`translate3d(${translateX}%, 0px, 0px)`}
+      style:transform={`translateX(calc(${translateX}% + ${translateXDiff}px))`}
     >
       <slot />
     </div>
