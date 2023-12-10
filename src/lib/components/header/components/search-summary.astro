@@ -12,13 +12,13 @@ const searchKey = Astro.url.searchParams.get(SEARCH_QUERY_KEY) ?? '';
 const title = `Search result for "${searchKey}"`;
 ---
 
-<div>
+<h1>
   <span class='line-clamp-2' {title}>{title}</span>
   <strong>{stringifyNumber(totalSearchResult, 'result')}</strong>
-</div>
+</h1>
 
 <style lang='scss'>
-  div {
+  h1 {
     display: flex;
     flex-wrap: wrap;
     gap: 2px;
@@ -49,7 +49,7 @@ const title = `Search result for "${searchKey}"`;
   }
 
   @include search-box-shown {
-    div {
+    h1 {
       flex: 0;
       width: 0;
       padding: 0;
@@ -59,7 +59,7 @@ const title = `Search result for "${searchKey}"`;
 
   @include lg {
     @include search-box-shown {
-      div {
+      h1 {
         width: fit-content;
         padding: 0 8px;
         flex: 1;

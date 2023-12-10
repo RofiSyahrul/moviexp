@@ -10,10 +10,10 @@ declare global {
   }
 
   interface ImportMetaEnv {
-    readonly API_KEY: string;
-    readonly API_URL: string;
     readonly KEYWORDS: string[];
     readonly REPOSITORY_URL: string;
+    readonly TMDB_ACCESS_TOKEN: string;
+    readonly TMDB_API_URL: string;
   }
 
   interface ImportMeta {

@@ -1,0 +1,50 @@
+---
+import { Image } from 'astro:assets';
+
+import type { MovieOverview } from '$lib/types/movie';
+
+import { buildMovieTitle } from './utils';
+
+interface Props {
+  isLazyImage: boolean;
+  movie: MovieOverview;
+}
+
+const { isLazyImage, movie } = Astro.props;
+
+const { original_title, title, poster_path } = movie;
+
+const IMAGE_WIDTH = 250;
+const IMAGE_HEIGHT = 375;
+
+const movieTitle = buildMovieTitle(title, original_title);
+---
+
+<div class='movie-card'>
+  <Image
+    alt={movieTitle}
+    class='movie-card__image'
+    data-tmdb-img='poster'
+    height={IMAGE_HEIGHT}
+    loading={isLazyImage ? 'lazy' : 'eager'}
+    src={poster_path}
+    width={IMAGE_WIDTH}
+  />
+  <p class='visually-hidden'>{movieTitle}</p>
+</div>
+
+<style lang='scss'>
+  .movie-card {
+    position: relative;
+    box-shadow: var(--shadow-low);
+    border-radius: 8px;
+  }
+
+  .movie-card__image {
+    width: 100%;
+    aspect-ratio: 2 / 3;
+    background-color: var(--color-neutral-25);
+    object-fit: cover;
+    border-radius: 8px;
+  }
+</style>

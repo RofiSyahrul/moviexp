@@ -1,13 +1,15 @@
-interface FetcherParams<Q extends object = object> {
+export interface FetcherParams<Q extends object = object> {
+  body?: BodyInit;
+  headers?: HeadersInit;
+  method?: 'GET' | 'POST';
   query?: Q;
   url: string;
 }
 
-const DEFAULT_BASE_URL = import.meta.env.API_URL;
+const DEFAULT_BASE_URL = import.meta.env.TMDB_API_URL;
 
 function buildURL<Q extends object>(url: string, query?: Q) {
   const finalURL = new URL(url, DEFAULT_BASE_URL);
-  finalURL.searchParams.set('apiKey', import.meta.env.API_KEY);
 
   if (!query) return finalURL;
 
@@ -25,10 +27,25 @@ function buildURL<Q extends object>(url: string, query?: Q) {
 }
 
 export default async function fetcher<T, Q extends object = object>({
+  body,
+  headers: headersInit,
+  method,
   query,
   url,
 }: FetcherParams<Q>): Promise<T> {
-  const response = await fetch(buildURL(url, query));
+  const headers = new Headers(headersInit);
+  if (!headers.get('Authorization')) {
+    headers.set(
+      'Authorization',
+      `Bearer ${import.meta.env.TMDB_ACCESS_TOKEN}`,
+    );
+  }
+
+  const response = await fetch(buildURL(url, query), {
+    body,
+    headers,
+    method,
+  });
 
   if (!response.ok) {
     throw new Error(response.statusText);

@@ -2,5 +2,7 @@ node_modules
 dist
 .DS_STORE
 .env
+.vercel
+integrations/**/*.js
 public/manifest.json
 public/browserconfig.xml

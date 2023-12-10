@@ -3,7 +3,7 @@ import { Image } from 'astro:assets';
 
 import GithubIcon from '$lib/images/github-icon.png';
 
-import SearchBox from './components/search-box/search-box.svelte';
+// import SearchBox from './components/search-box/search-box.svelte';
 import SearchSummary from './components/search-summary.astro';
 
 interface Props {
@@ -33,12 +33,13 @@ const { totalSearchResult = 0 } = Astro.props;
     </nav>
 
     <div class='search-container'>
-      {totalSearchResult > 0 && <SearchSummary {totalSearchResult} />}
-      <SearchBox
-        label='Search movies here'
-        client:load
-        transition:persist
-      />
+      {
+        totalSearchResult > 0 ? (
+          <SearchSummary {totalSearchResult} />
+        ) : (
+          <h1 class='text-2xl font-bold'>Explore Movies</h1>
+        )
+      }
     </div>
   </header>
 </div>

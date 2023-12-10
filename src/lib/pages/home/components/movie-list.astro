@@ -1,0 +1,40 @@
+---
+import MovieCard from '$lib/components/movie-card/movie-card.astro';
+import SliderItem from '$lib/components/slider/slider-item.svelte';
+import Slider from '$lib/components/slider/slider.svelte';
+import type { MovieOverview } from '$lib/types/movie';
+
+interface Props {
+  movieList: MovieOverview[];
+  title: string;
+}
+
+const { movieList, title } = Astro.props;
+---
+
+<section>
+  <h2 class='font-semibold text-xl'>{title}</h2>
+  <Slider client:load>
+    {
+      movieList.map(movie => (
+        <SliderItem>
+          <MovieCard isLazyImage movie={movie} />
+        </SliderItem>
+      ))
+    }
+  </Slider>
+</section>
+
+<style>
+  section {
+    width: 100%;
+    max-width: var(--screen-size-xl);
+    padding: 8px 0;
+    margin: 0 auto;
+  }
+
+  h2 {
+    margin: 0 0 8px;
+    padding: 0 var(--left-right-gutter);
+  }
+</style>

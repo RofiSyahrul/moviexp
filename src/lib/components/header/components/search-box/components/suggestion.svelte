@@ -2,15 +2,15 @@
   export let isOpen: boolean;
 </script>
 
-<div aria-hidden={!isOpen} class="suggestion"></div>
+<div data-is-open={isOpen} class="suggestion"></div>
 
 <style lang="scss">
   .suggestion {
     position: absolute;
-    display: flex;
+    display: none;
   }
 
-  .suggestion[aria-hidden='true'] {
-    display: none;
+  .suggestion[data-is-open='true'] {
+    display: flex;
   }
 </style>

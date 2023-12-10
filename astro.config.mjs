@@ -1,3 +1,5 @@
+import path from 'path';
+
 import node from '@astrojs/node';
 import svelte from '@astrojs/svelte';
 import tailwind from '@astrojs/tailwind';
@@ -7,6 +9,7 @@ import dotenv from 'dotenv';
 
 import {
   assetsHashing,
+  buildImageService,
   globalInjector,
   manifestGenerator,
 } from './integrations';
@@ -27,11 +30,18 @@ export default defineConfig({
         hostname: '*.scdn.co',
       },
     ],
+    service: {
+      entrypoint: path.resolve(
+        process.cwd(),
+        './integrations/image-service/image-service.js',
+      ),
+    },
   },
   integrations: [
     svelte(),
     tailwind(),
     assetsHashing(),
+    buildImageService(),
     globalInjector(),
     manifestGenerator(),
   ],

@@ -27,3 +27,15 @@ $screen-lg: 768px;
     @content;
   }
 }
+
+@mixin desktop-only {
+  :global(.desktop) {
+    @content;
+  }
+}
+
+@mixin mobile-only {
+  :global(.mobile) {
+    @content;
+  }
+}

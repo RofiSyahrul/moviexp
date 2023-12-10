@@ -1,9 +1,16 @@
-export type MovieType = 'movie' | 'series' | 'episode' | 'game';
-
 export interface MovieOverview {
-  imdbID: string;
-  poster: string;
+  adult: boolean;
+  backdrop_path: string;
+  genre_ids: number[];
+  id: number;
+  original_language: string;
+  original_title: string;
+  overview: string;
+  popularity: number;
+  poster_path: string;
+  release_date: string;
   title: string;
-  type: MovieType;
-  year: string;
+  video: boolean;
+  vote_average: number;
+  vote_count: number;
 }

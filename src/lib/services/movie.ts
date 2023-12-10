@@ -1,50 +1,20 @@
-import type { MovieType } from '$lib/types/movie';
+import type { MovieOverview } from '$lib/types/movie';
 
 import fetcher from './fetcher';
 
-interface FetchMovieListQuery {
-  page?: number;
-  s?: string;
-  type?: MovieType;
-  y?: string;
+interface MovieListResponse {
+  results: MovieOverview[];
 }
 
-interface ErrorResponse {
-  Error: string;
-  Response: 'False';
-}
-
-interface MovieOverviewResponse {
-  Title: string;
-  Year: string;
-  imdbID: string;
-  Type: MovieType;
-  Poster: string;
-}
-
-interface MovieListSuccessResponse {
-  Search: MovieOverviewResponse[];
-  totalResults: string;
-  Response: 'True';
-}
-
-export type MovieListResponse =
-  | MovieListSuccessResponse
-  | ErrorResponse;
-
-export async function fetchMovieList(
-  query: FetchMovieListQuery = {},
-): Promise<MovieListResponse> {
+export async function fetchTrendingMovies(): Promise<
+  MovieOverview[]
+> {
   try {
-    return await fetcher<MovieListResponse>({
-      query,
-      url: '/',
+    const response = await fetcher<MovieListResponse>({
+      url: '/3/trending/movie/week',
     });
-  } catch (error_) {
-    const error = error_ as Error;
-    return {
-      Error: error?.message ?? 'Error',
-      Response: 'False',
-    };
+    return response.results;
+  } catch {
+    return [];
   }
 }
