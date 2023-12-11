@@ -1,4 +1,6 @@
 import { defineMiddleware } from 'astro:middleware';
+import dayjs from 'dayjs';
+import advancedFormat from 'dayjs/plugin/advancedFormat';
 import UAParser from 'ua-parser-js';
 
 import type { UABrowser, UserAgent } from './lib/types/user-agent';
@@ -45,6 +47,8 @@ function parseUserAgent(request: Request): UserAgent {
     isSupportAvif: isSupportAvif(uaBrowser),
   };
 }
+
+dayjs.extend(advancedFormat);
 
 export const onRequest = defineMiddleware((context, next) => {
   context.locals.userAgent = parseUserAgent(context.request);

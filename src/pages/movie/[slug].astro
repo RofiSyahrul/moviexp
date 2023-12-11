@@ -1,0 +1,9 @@
+---
+import Detail from '$lib/pages/detail/detail.astro';
+import { getServerResponse } from '$lib/pages/detail/detail.server';
+
+const response = await getServerResponse(Astro);
+if (response instanceof Response) return response;
+---
+
+<Detail {...response.props} />

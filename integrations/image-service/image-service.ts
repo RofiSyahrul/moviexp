@@ -162,7 +162,18 @@ const imageService = {
     };
   },
 
-  validateOptions: baseService.validateOptions,
+  async validateOptions(
+    options: ImageTransform,
+    imageConfig: ImageConfig,
+  ): Promise<ImageTransform> {
+    if (isTMDBImage(options)) return options;
+
+    return (
+      (await baseService.validateOptions?.(options, imageConfig)) ??
+      options
+    );
+  },
+
   parseURL: baseService.parseURL,
   transform: sharpService.transform,
 };

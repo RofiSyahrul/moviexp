@@ -7,39 +7,62 @@ import GithubIcon from '$lib/images/github-icon.png';
 import SearchSummary from './components/search-summary.astro';
 
 interface Props {
+  title?: string;
   totalSearchResult?: number;
+  variant?: 'home' | 'detail';
 }
 
-const { totalSearchResult = 0 } = Astro.props;
+const {
+  title = 'Explore Movies',
+  totalSearchResult = 0,
+  variant = 'home',
+} = Astro.props;
 ---
 
 <div class='header-container'>
   <header data-search-box-shown='false'>
-    <nav>
-      <a
-        href={import.meta.env.REPOSITORY_URL}
-        target='_blank'
-        title='Repository'
-      >
-        <Image
-          alt='GitHub Icon'
-          loading='eager'
-          src={GithubIcon}
-          width={96}
-          height={96}
-        />
-        <span class='visually-hidden'>Repository</span>
-      </a>
-    </nav>
+    <div class='header__inner'>
+      <nav>
+        {
+          variant === 'home' ? (
+            <a
+              href={import.meta.env.REPOSITORY_URL}
+              target='_blank'
+              title='Repository'
+            >
+              <Image
+                alt='GitHub Icon'
+                loading='eager'
+                src={GithubIcon}
+                width={96}
+                height={96}
+              />
+              <span class='visually-hidden'>Repository</span>
+            </a>
+          ) : (
+            <a href='/' title='Homepage'>
+              <Image
+                alt='Home'
+                loading='eager'
+                src='/icons/apple-touch-icon-114x114.png'
+                width={96}
+                height={96}
+              />
+              <span class='visually-hidden'>Home</span>
+            </a>
+          )
+        }
+      </nav>
 
-    <div class='search-container'>
-      {
-        totalSearchResult > 0 ? (
-          <SearchSummary {totalSearchResult} />
-        ) : (
-          <h1 class='text-2xl font-bold'>Explore Movies</h1>
-        )
-      }
+      <div class='search-container'>
+        {
+          totalSearchResult > 0 ? (
+            <SearchSummary {totalSearchResult} />
+          ) : (
+            <h1 class='font-bold line-clamp-2'>{title}</h1>
+          )
+        }
+      </div>
     </div>
   </header>
 </div>
@@ -57,18 +80,26 @@ const { totalSearchResult = 0 } = Astro.props;
     top: 0;
     left: 0;
     z-index: var(--z-index-app-bar);
-    display: flex;
-    gap: 4px;
-    align-items: center;
-    justify-content: space-between;
     width: 100%;
     height: var(--header-height);
-    padding: 0 16px;
     background-color: var(--color-neutral-00);
     box-shadow: var(--shadow-high);
     transition-property: width, padding;
     transition-duration: 300ms;
     transition-timing-function: ease-in;
+  }
+
+  .header__inner {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    max-width: var(--screen-size-xl);
+    height: var(--header-height);
+    padding: 0 var(--left-right-gutter);
+    margin: 0 auto;
+    transition: inherit;
   }
 
   nav {
@@ -92,8 +123,13 @@ const { totalSearchResult = 0 } = Astro.props;
     display: flex;
     flex: 1;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: center;
     transition: inherit;
+
+    h1 {
+      text-align: center;
+      font-size: 18px;
+    }
   }
 
   @include search-box-shown {
@@ -102,17 +138,27 @@ const { totalSearchResult = 0 } = Astro.props;
     }
   }
 
+  @include md {
+    .search-container {
+      h1 {
+        font-size: 20px;
+      }
+    }
+  }
+
   @include lg {
     .header-container {
       --header-height: 96px;
     }
 
-    header {
-      padding: 0 32px;
-    }
-
     nav {
       --size: 48px;
+    }
+
+    .search-container {
+      h1 {
+        font-size: 24px;
+      }
     }
 
     @include search-box-shown {

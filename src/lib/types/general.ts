@@ -20,3 +20,9 @@ export type ServerResponse<P extends object> =
 export type GetServerResponse<P extends object> = (
   astro: AstroGlobal,
 ) => ServerResponse<P> | Promise<ServerResponse<P>>;
+
+export interface SEOMeta {
+  description: string;
+  imageURL?: string;
+  title: string;
+}

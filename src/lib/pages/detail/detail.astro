@@ -1,1 +1,19 @@
-<div>Movie Detail Page</div>
+---
+import Document from '$lib/_document.astro';
+import Header from '$lib/components/header/header.astro';
+
+import Summary from './components/summary/summary.astro';
+import type { DetailPageProps } from './detail.server';
+
+type Props = DetailPageProps;
+
+const { movieDetail, seoMeta } = Astro.props;
+---
+
+<Document {...seoMeta}>
+  <Header title={seoMeta.title} variant='detail' />
+
+  <main>
+    <Summary movieDetail={movieDetail} />
+  </main>
+</Document>

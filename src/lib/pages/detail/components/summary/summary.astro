@@ -1,0 +1,244 @@
+---
+import dayjs from 'dayjs';
+
+import Label from '$lib/components/label.svelte';
+import Poster from '$lib/components/poster.astro';
+import type { MovieDetail } from '$lib/types/movie';
+
+import { convertRuntime } from './utils';
+
+interface Props {
+  movieDetail: MovieDetail;
+}
+
+const { movieDetail } = Astro.props;
+
+const {
+  backdropURL,
+  genres,
+  original_title,
+  overview,
+  poster_path,
+  release_date,
+  releaseYear,
+  resolvedTitle,
+  spoken_languages,
+  tagline,
+  title,
+  runtime,
+} = movieDetail;
+
+const formattedReleaseDate = release_date
+  ? dayjs(release_date).format('MMMM Do, YYYY')
+  : null;
+
+const convertedRuntime = convertRuntime(runtime);
+---
+
+<section
+  style={{
+    backgroundImage: backdropURL && `url(${backdropURL})`,
+  }}
+>
+  <div class='summary'>
+    <Poster
+      alt={resolvedTitle}
+      class='summary__poster'
+      loading='eager'
+      posterPath={poster_path}
+    />
+
+    <div class='summary__content'>
+      <div class='summary__title'>
+        <p class='summary__title__original'>
+          {original_title || title}
+        </p>
+        {
+          original_title && original_title !== title && (
+            <p class='summary__title__alias'>{title}</p>
+          )
+        }
+        {
+          releaseYear && (
+            <div class='summary__title__label'>
+              <Label color='white'>{releaseYear}</Label>
+            </div>
+          )
+        }
+      </div>
+
+      {
+        (formattedReleaseDate || convertedRuntime) && (
+          <ul class='summary__bullet-list'>
+            {formattedReleaseDate && <li>{formattedReleaseDate}</li>}
+
+            {spoken_languages.length > 0 && (
+              <li>
+                {spoken_languages
+                  .map(lang => lang.english_name)
+                  .join(', ')}
+              </li>
+            )}
+
+            {convertedRuntime && <li>{convertedRuntime}</li>}
+          </ul>
+        )
+      }
+
+      {
+        genres.length > 0 && (
+          <ul>
+            {genres.map(genre => (
+              <Label component='li'>{genre.name}</Label>
+            ))}
+          </ul>
+        )
+      }
+
+      {tagline && <blockquote>{tagline}</blockquote>}
+
+      <div class='summary__overview'>{overview}</div>
+    </div>
+  </div>
+</section>
+
+<style lang='scss'>
+  section {
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    border-bottom: 2px solid var(--color-green-80);
+  }
+
+  .summary {
+    --initial-bg: rgba(var(--rgb-neutral-25), 0.6);
+    --end-bg: rgba(var(--rgb-neutral-45), 0.8);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding: 32px var(--left-right-gutter);
+    background: linear-gradient(
+      to bottom,
+      var(--initial-bg),
+      var(--end-bg)
+    );
+    color: var(--color-neutral-05);
+
+    blockquote {
+      padding: 8px 0 8px 16px;
+      margin: 8px 0;
+      color: var(--color-neutral-15);
+      font-style: italic;
+      box-shadow: inset 4px 0 0 0 rgba(var(--rgb-neutral-20), 0.2);
+    }
+  }
+
+  .summary__poster {
+    box-shadow: var(--shadow-low);
+    border: 1px solid rgba(var(--rgb-neutral-10), 0.2);
+  }
+
+  .summary__content {
+    flex: 1;
+    width: 100%;
+  }
+
+  .summary__title {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    flex-wrap: wrap;
+
+    p {
+      line-height: 1;
+    }
+
+    .summary__title__original {
+      flex: 1 1 100%;
+      font-size: 24px;
+      font-weight: 600;
+    }
+
+    .summary__title__alias {
+      font-style: italic;
+      font-size: 20px;
+    }
+
+    .summary__title__label {
+      flex: 1;
+    }
+
+    p:first-of-type:last-of-type,
+    p:first-of-type:last-of-type + .summary__title__label {
+      flex: unset;
+    }
+  }
+
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+    margin: 8px 0 0;
+  }
+
+  .summary__bullet-list {
+    margin-top: 4px;
+
+    li {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    li:not(:last-child)::after {
+      width: 4px;
+      height: 4px;
+      background-color: var(--color-neutral-10);
+      border-radius: 50%;
+      content: '';
+    }
+  }
+
+  .summary__overview {
+    margin-top: 16px;
+  }
+
+  @include sm {
+    .summary__title {
+      .summary__title__original {
+        font-size: 32px;
+      }
+    }
+  }
+
+  @include md {
+    .summary {
+      flex-direction: row;
+      width: unset;
+      background: linear-gradient(
+        to right,
+        var(--initial-bg),
+        var(--end-bg)
+      );
+    }
+  }
+
+  @include lg {
+    .summary {
+      position: relative;
+
+      blockquote {
+        position: absolute;
+        bottom: 0;
+        right: var(--left-right-gutter);
+      }
+    }
+    .summary__title {
+      .summary__title__original {
+        font-size: 48px;
+      }
+    }
+  }
+</style>

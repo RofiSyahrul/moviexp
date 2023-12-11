@@ -1,7 +1,10 @@
 import dayjs from 'dayjs';
 import type { Dayjs } from 'dayjs';
 
-import type { MovieOverview } from '$lib/types/movie';
+import type {
+  MovieDetailFromResponse,
+  MovieOverview,
+} from '$lib/types/movie';
 
 import fetcher from './fetcher';
 
@@ -93,4 +96,16 @@ export async function fetchPopularMovies(): Promise<MovieOverview[]> {
   return await fetchDiscoverMovies({
     sort_by: 'popularity.desc',
   });
+}
+
+export async function fetchMovieDetail(
+  id: number,
+): Promise<MovieDetailFromResponse | null> {
+  try {
+    return await fetcher<MovieDetailFromResponse>({
+      url: '/3/movie/' + id,
+    });
+  } catch (error) {
+    return null;
+  }
 }

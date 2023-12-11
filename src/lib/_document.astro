@@ -2,7 +2,7 @@
 import { ViewTransitions } from 'astro:transitions';
 
 import appConfig from './app.config';
-import type { LiteralUnion } from './types/general';
+import type { LiteralUnion, SEOMeta } from './types/general';
 
 interface LinkDescriptor {
   /**
@@ -46,13 +46,10 @@ interface LinkDescriptor {
   color?: string;
 }
 
-interface Props {
-  description?: string;
+interface Props extends Partial<SEOMeta> {
   disabledCanonicalURL?: boolean;
-  imageURL?: string;
   keyword?: string;
   noIndex?: boolean;
-  title?: string;
 }
 
 const DEFAULT_TITLE = 'Explore movies';

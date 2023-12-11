@@ -1,0 +1,49 @@
+---
+import { Image } from 'astro:assets';
+
+import NoImagePoster from '$lib/images/no-image-poster.png';
+
+interface Props {
+  alt: string;
+  class?: string;
+  loading?: 'eager' | 'lazy';
+  posterPath: string | null;
+}
+
+const { alt, class: className, loading, posterPath } = Astro.props;
+
+const IMAGE_WIDTH = 250;
+const IMAGE_HEIGHT = 375;
+---
+
+{
+  posterPath ? (
+    <Image
+      alt={alt}
+      class:list={['poster', className]}
+      data-tmdb-img='poster'
+      height={IMAGE_HEIGHT}
+      loading={loading}
+      src={posterPath}
+      width={IMAGE_WIDTH}
+    />
+  ) : (
+    <Image
+      alt={alt}
+      class:list={['poster', className]}
+      height={IMAGE_HEIGHT}
+      loading={loading}
+      src={NoImagePoster}
+      width={IMAGE_WIDTH}
+    />
+  )
+}
+
+<style>
+  .poster {
+    aspect-ratio: 2 / 3;
+    background-color: rgba(var(--rgb-neutral-25), 0.6);
+    object-fit: cover;
+    border-radius: 8px;
+  }
+</style>

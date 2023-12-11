@@ -9,7 +9,7 @@ export function globalInjector(): AstroIntegration {
     hooks: {
       'astro:config:setup': ({ injectScript, updateConfig }) => {
         injectScript('page-ssr', 'import "$lib/styles.scss";');
-        injectScript('page', 'import "$lib/script";');
+        // injectScript('page', 'import "$lib/script";');
 
         const viteConfig: ViteUserConfig = {
           define: {

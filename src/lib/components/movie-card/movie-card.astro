@@ -1,11 +1,14 @@
 ---
-import { Image } from 'astro:assets';
-
 import Label from '$lib/components/label.svelte';
-import NoImagePoster from '$lib/images/no-image-poster.png';
+import Poster from '$lib/components/poster.astro';
+import { MOVIE_PATH_PREFIX } from '$lib/constants/internal-urls';
 import type { MovieOverview } from '$lib/types/movie';
+import {
+  buildMovieTitleAndSlug,
+  getReleaseYear,
+} from '$lib/utils/movie';
 
-import { buildMovieTitle, getMovieGenres } from './utils';
+import { getMovieGenres } from './utils';
 
 interface Props {
   isLazyImage: boolean;
@@ -14,54 +17,62 @@ interface Props {
 
 const { isLazyImage, movie } = Astro.props;
 
-const { genre_ids, original_title, title, poster_path } = movie;
+const {
+  genre_ids,
+  id,
+  original_title,
+  poster_path,
+  release_date,
+  title,
+} = movie;
 
-const IMAGE_WIDTH = 250;
-const IMAGE_HEIGHT = 375;
+const { movieTitle, slug } = buildMovieTitleAndSlug(
+  id,
+  title,
+  original_title,
+);
 
-const movieTitle = buildMovieTitle(title, original_title);
 const genres = getMovieGenres(genre_ids);
+const releaseYear = getReleaseYear(release_date);
 ---
 
 <div class='movie-card'>
-  {
-    poster_path ? (
-      <Image
-        alt={movieTitle}
-        class='movie-card__image'
-        data-tmdb-img='poster'
-        height={IMAGE_HEIGHT}
-        loading={isLazyImage ? 'lazy' : 'eager'}
-        src={poster_path}
-        width={IMAGE_WIDTH}
-      />
-    ) : (
-      <Image
-        alt={movieTitle}
-        class='movie-card__image'
-        data-tmdb-img='poster'
-        height={IMAGE_HEIGHT}
-        loading={isLazyImage ? 'lazy' : 'eager'}
-        src={NoImagePoster}
-        width={IMAGE_WIDTH}
-      />
-    )
-  }
+  <Poster
+    alt={movieTitle}
+    class='movie-card__poster'
+    loading={isLazyImage ? 'lazy' : 'eager'}
+    posterPath={poster_path}
+  />
 
-  <p class={poster_path ? 'visually-hidden' : 'movie-card__title'}>
-    {movieTitle}
-  </p>
+  <a
+    class='movie-card__link'
+    href={MOVIE_PATH_PREFIX + '/' + slug}
+    title={movieTitle}
+  >
+    <span
+      class={poster_path ? 'visually-hidden' : 'movie-card__title'}
+    >
+      {movieTitle}
+    </span>
+  </a>
 
   {
-    genres.length > 0 && (
-      <div class='movie-card__genres'>
-        <div class='visually-hidden'>Genres</div>
-        <ul class='movie-card__genres__list'>
-          {genres.map(genre => (
-            <Label class='line-clamp-1' component='li'>
-              {genre}
+    (genres.length > 0 || releaseYear) && (
+      <div class='movie-card__labels'>
+        <div class='visually-hidden'>Genres and Release Year</div>
+        <ul class='movie-card__labels__list'>
+          {genres.length > 0 &&
+            genres.map(genre => (
+              <Label class='line-clamp-1' component='li'>
+                {genre}
+              </Label>
+            ))}
+
+          {releaseYear && (
+            <Label class='line-clamp-1' color='white' component='li'>
+              {releaseYear}
             </Label>
-          ))}
+          )}
         </ul>
       </div>
     )
@@ -75,12 +86,18 @@ const genres = getMovieGenres(genre_ids);
     border-radius: 8px;
   }
 
-  .movie-card__image {
+  .movie-card__poster {
     width: 100%;
-    aspect-ratio: 2 / 3;
-    background-color: var(--color-neutral-25);
-    object-fit: cover;
-    border-radius: 8px;
+  }
+
+  .movie-card__link::after {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+    content: ' ';
   }
 
   .movie-card__title {
@@ -92,14 +109,14 @@ const genres = getMovieGenres(genre_ids);
     text-align: center;
   }
 
-  .movie-card__genres {
+  .movie-card__labels {
     position: absolute;
     top: 0;
     left: 0;
     padding: 4px;
   }
 
-  .movie-card__genres__list {
+  .movie-card__labels__list {
     display: flex;
     flex-wrap: wrap;
     gap: 4px;

@@ -1,4 +1,5 @@
 ---
+import Document from '$lib/_document.astro';
 import Header from '$lib/components/header/header.astro';
 
 import MovieList from './components/movie-list.astro';
@@ -14,11 +15,16 @@ const {
 } = Astro.props;
 ---
 
-<Header />
+<Document>
+  <Header />
 
-<main>
-  <MovieList movieList={trendingMovies} title='Trending This Week' />
-  <MovieList movieList={nowPlayingMovies} title='Now Playing' />
-  <MovieList movieList={upcomingMovies} title='Upcoming' />
-  <MovieList movieList={popularMovies} title='Popular' />
-</main>
+  <main>
+    <MovieList
+      movieList={trendingMovies}
+      title='Trending This Week'
+    />
+    <MovieList movieList={nowPlayingMovies} title='Now Playing' />
+    <MovieList movieList={upcomingMovies} title='Upcoming' />
+    <MovieList movieList={popularMovies} title='Popular' />
+  </main>
+</Document>

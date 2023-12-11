@@ -46,6 +46,9 @@ export default defineConfig({
     manifestGenerator(),
   ],
   output: 'server',
+  prefetch: {
+    defaultStrategy: 'tap',
+  },
   scopedStyleStrategy: 'class',
   vite: {
     css: {

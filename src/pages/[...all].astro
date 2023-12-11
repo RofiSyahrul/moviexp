@@ -1,9 +1,3 @@
 ---
-import { SEARCH_QUERY_KEY } from '$lib/constants/search';
-
-const searchParams = new URLSearchParams({
-  [SEARCH_QUERY_KEY]: 'movie',
-});
-
-return Astro.redirect('/?' + searchParams.toString(), 307);
+return Astro.redirect('/', 307);
 ---
