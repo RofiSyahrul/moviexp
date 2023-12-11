@@ -3,26 +3,26 @@
 <style lang="scss">
   div {
     display: inline-block;
-    width: 100%;
+    flex: 0 0 100%;
     padding: 4px;
     white-space: normal;
   }
 
   @include sm {
     div {
-      width: 50%;
+      flex-basis: 50%;
     }
   }
 
   @include lg {
     div {
-      width: calc(100% / 3);
+      flex-basis: calc(100% / 3);
     }
   }
 
   @include xl {
     div {
-      width: 25%;
+      flex-basis: 25%;
     }
   }
 </style>

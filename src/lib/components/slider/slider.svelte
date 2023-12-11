@@ -120,8 +120,10 @@
   }
 
   .slider__content {
-    display: block;
+    display: flex;
+    flex-wrap: nowrap;
     margin: -4px;
+    width: 100%;
     transition: transform 0.5s ease-in;
     white-space: nowrap;
   }
@@ -132,7 +134,6 @@
     top: 0;
     bottom: 0;
     z-index: 2;
-    width: calc(var(--left-right-gutter) - 8px);
     overflow: hidden;
     padding: 0;
     color: var(--color-neutral-05);
@@ -142,11 +143,13 @@
 
   .slider__prev {
     left: 0;
+    width: calc(var(--left-right-gutter) - 8px);
     border-radius: 0 8px 8px 0;
   }
 
   .slider__next {
     right: 0;
+    width: var(--left-right-gutter);
     border-radius: 8px 0 0 8px;
   }
 

@@ -51,10 +51,15 @@ module.exports = {
           borderLeftColor: 'var(--color-green-50)',
         },
         '.visually-hidden': {
-          display: 'block',
-          width: 0,
-          height: 0,
+          position: 'absolute',
+          width: '1px',
+          height: '1px',
+          margin: '-1px',
+          padding: '0',
           overflow: 'hidden',
+          whiteSpace: 'nowrap',
+          border: '0',
+          clip: 'rect(0, 0, 0, 0)',
         },
       });
     }),
