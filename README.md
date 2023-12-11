@@ -1,6 +1,6 @@
 # Demo
 
-[https://moviexp.rofi.link](https://moviexp.rofi.link)
+[https://movies.rofi.link](https://movies.rofi.link)
 
 # Run in development mode
 
