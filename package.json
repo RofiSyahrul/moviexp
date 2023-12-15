@@ -4,10 +4,10 @@
   "description": "explore movies from omdb API",
   "type": "module",
   "scripts": {
-    "dev": "astro dev --port 6565",
+    "dev": "astro dev --port 6565 --host",
     "build": "DEPLOYMENT_PLATFORM=vercel astro build",
     "build:local": "astro build",
-    "start:local": "astro preview --port 5656",
+    "start:local": "astro preview --port 5656 --host",
     "logic-test": "pnpm node-ts ./scripts/logic-test.ts",
     "lint": "eslint . --ext .js,.ts,.tsx --color",
     "node-ts": "node --loader esbuild-register/loader -r esbuild-register",

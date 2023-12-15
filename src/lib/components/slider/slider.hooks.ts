@@ -45,12 +45,6 @@ export function useNavigateSlider() {
       $activeIndex + $translationOffsetIndex,
   );
 
-  const disabledPrev = derived(
-    [activeIndex, translationOffsetIndex],
-    ([$activeIndex, $translationOffsetIndex]) =>
-      $activeIndex === 0 && $translationOffsetIndex === 0,
-  );
-
   function goToNextSlide() {
     disabledTransition.set(false);
     activeIndex.update(prev => prev + 1);
@@ -72,7 +66,6 @@ export function useNavigateSlider() {
   }
 
   return {
-    disabledPrev,
     disabledTransition,
     goToNextSlide,
     goToPrevSlide,

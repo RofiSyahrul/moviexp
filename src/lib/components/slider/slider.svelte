@@ -29,7 +29,6 @@
     useTotalSlides();
 
   const {
-    disabledPrev,
     disabledTransition,
     goToNextSlide,
     goToPrevSlide,
@@ -38,7 +37,8 @@
     translationIndex,
   } = useNavigateSlider();
 
-  $: disabledNext = $totalSlides <= 1;
+  $: disabledNext = $translationIndex >= $totalSlides - 1;
+  $: disabledPrev = $translationIndex <= 0;
 
   const handleTouchStart: TouchEventHandler<
     HTMLDivElement
@@ -65,7 +65,7 @@
 
     if (deltaX > threshold && !disabledNext) {
       goToNextSlide();
-    } else if (deltaX < -threshold && !$disabledPrev) {
+    } else if (deltaX < -threshold && !disabledPrev) {
       goToPrevSlide();
     }
 
@@ -81,6 +81,7 @@
     const totalActualSlides = getTotalSlides(sliderContent);
     if (totalActualSlides <= 1) return;
 
+    totalSlides.set(totalActualSlides);
     const isFirstSlide = $translationIndex === 0;
     const isLastSlide = $translationIndex === totalActualSlides - 1;
 
@@ -149,7 +150,7 @@
 <div class="slider">
   <button
     class="btn slider__prev"
-    disabled={$disabledPrev}
+    disabled={disabledPrev}
     on:click={goToPrevSlide}
   >
     <ChevronLeft ariaLabel="Previous" />
