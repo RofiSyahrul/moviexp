@@ -1,40 +1,44 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
-  import type { TouchEventHandler } from 'svelte/elements';
+  import type {
+    TouchEventHandler,
+    TransitionEventHandler,
+  } from 'svelte/elements';
 
   import ChevronLeft from '$lib/icons/chevron-left.svelte';
 
-  const MIN_INDEX = 0;
-  const RATIO = 100;
+  import {
+    getLeftSlidesAndRemoveThem,
+    getRightSlidesAndRemoveThem,
+    getSlidesWraper,
+    getTotalSlides,
+    useNavigateSlider,
+    useTotalSlides,
+  } from './slider.hooks';
 
-  let activeIndex = 0;
+  const MIN_SLIDES_TO_REMOVE_ORIGINAL_SLIDE = 3;
+  const SWIPE_THRESHOLD_RATIO = 0.25;
+  const TRANSLATION_RATIO = 100;
+
   let isDragging = false;
-  let maxIndex = 0;
-  let sliderContent: HTMLDivElement;
   let startX = 0;
-  let translateXDiff = 0;
+  let touchMoveDelta = 0;
 
-  function updateMaxIndex() {
-    const { clientWidth, scrollWidth } = sliderContent;
-    const totalSlidesFloat = scrollWidth / clientWidth;
-    const totalSlidesInt = Math.floor(totalSlidesFloat);
-    maxIndex =
-      totalSlidesFloat === totalSlidesInt
-        ? totalSlidesInt - 1
-        : totalSlidesInt;
-  }
+  let translateX = '';
 
-  onMount(() => {
-    updateMaxIndex();
-  });
+  const { sliderContent, totalSlides, updateTotalSlides } =
+    useTotalSlides();
 
-  function handleNext() {
-    activeIndex += 1;
-  }
+  const {
+    disabledPrev,
+    disabledTransition,
+    goToNextSlide,
+    goToPrevSlide,
+    offsetDecrement,
+    offsetIncrement,
+    translationIndex,
+  } = useNavigateSlider();
 
-  function handlePrev() {
-    activeIndex -= 1;
-  }
+  $: disabledNext = $totalSlides <= 1;
 
   const handleTouchStart: TouchEventHandler<
     HTMLDivElement
@@ -49,36 +53,104 @@
     if (!isDragging) return;
 
     const currentX = event.touches[0].clientX;
-    translateXDiff = currentX - startX;
+    touchMoveDelta = currentX - startX;
   };
 
   const handleTouchEnd: TouchEventHandler<HTMLDivElement> = event => {
     if (!isDragging) return;
 
     const deltaX = startX - event.changedTouches[0].clientX;
-    const threshold = event.currentTarget.clientWidth / 4;
+    const threshold =
+      event.currentTarget.clientWidth * SWIPE_THRESHOLD_RATIO;
 
-    if (deltaX > threshold && activeIndex < maxIndex) {
-      handleNext();
-    } else if (deltaX < -threshold && activeIndex > 0) {
-      handlePrev();
+    if (deltaX > threshold && !disabledNext) {
+      goToNextSlide();
+    } else if (deltaX < -threshold && !$disabledPrev) {
+      goToPrevSlide();
     }
 
-    translateXDiff = 0;
+    touchMoveDelta = 0;
     isDragging = false;
   };
 
-  $: translateX =
-    -Math.max(MIN_INDEX, Math.min(activeIndex, maxIndex)) * RATIO;
+  const handleTransitionEnd: TransitionEventHandler<
+    HTMLDivElement
+  > = event => {
+    const sliderContent = event.currentTarget;
+
+    const totalActualSlides = getTotalSlides(sliderContent);
+    if (totalActualSlides <= 1) return;
+
+    const isFirstSlide = $translationIndex === 0;
+    const isLastSlide = $translationIndex === totalActualSlides - 1;
+
+    if (!isFirstSlide && !isLastSlide) return;
+
+    const shouldRemoveOriginalSlide =
+      totalActualSlides >= MIN_SLIDES_TO_REMOVE_ORIGINAL_SLIDE;
+    const sliderWidth = sliderContent.clientWidth;
+
+    const slidesWrapper = getSlidesWraper(sliderContent);
+    const slides = slidesWrapper.children;
+
+    let rightSlides: Node[] = [];
+    let leftSlides: Node[] = [];
+
+    if (isFirstSlide || !shouldRemoveOriginalSlide) {
+      rightSlides = getRightSlidesAndRemoveThem(
+        slides,
+        sliderWidth,
+        shouldRemoveOriginalSlide,
+      );
+    }
+
+    if (isLastSlide || !shouldRemoveOriginalSlide) {
+      leftSlides = getLeftSlidesAndRemoveThem(
+        slides,
+        sliderWidth,
+        shouldRemoveOriginalSlide,
+      );
+    }
+
+    if (rightSlides.length > 0) {
+      const translateX = -($translationIndex + 1) * TRANSLATION_RATIO;
+      sliderContent.style.transition = 'unset';
+      sliderContent.style.transform = `translate3d(${translateX}%, 0, 0)`;
+      offsetIncrement();
+      slidesWrapper.prepend(...rightSlides);
+    }
+
+    if (leftSlides.length > 0) {
+      if (shouldRemoveOriginalSlide) {
+        const translateX =
+          -($translationIndex - 1) * TRANSLATION_RATIO;
+        sliderContent.style.transition = 'unset';
+        sliderContent.style.transform = `translate3d(${translateX}%, 0, 0)`;
+        offsetDecrement();
+      }
+
+      slidesWrapper.append(...leftSlides);
+    }
+  };
+
+  $: {
+    const baseTranslateX = -$translationIndex * TRANSLATION_RATIO;
+
+    if (touchMoveDelta && !disabledNext) {
+      translateX = `calc(${baseTranslateX}% + ${touchMoveDelta}px)`;
+    } else {
+      translateX = `${baseTranslateX}%`;
+    }
+  }
 </script>
 
-<svelte:window on:resize={updateMaxIndex} />
+<svelte:window on:resize={updateTotalSlides} />
 
 <div class="slider">
   <button
     class="btn slider__prev"
-    disabled={activeIndex <= MIN_INDEX}
-    on:click={handlePrev}
+    disabled={$disabledPrev}
+    on:click={goToPrevSlide}
   >
     <ChevronLeft ariaLabel="Previous" />
     <span class="visually-hidden">Previous</span>
@@ -86,12 +158,14 @@
 
   <div class="slider__mask">
     <div
-      bind:this={sliderContent}
+      bind:this={$sliderContent}
       on:touchstart={handleTouchStart}
       on:touchmove={handleTouchMove}
       on:touchend={handleTouchEnd}
+      on:transitionend={handleTransitionEnd}
       class="slider__content"
-      style:transform={`translateX(calc(${translateX}% + ${translateXDiff}px))`}
+      style:transform={`translateX(${translateX})`}
+      style:transition={$disabledTransition ? 'unset' : undefined}
     >
       <slot />
     </div>
@@ -99,8 +173,8 @@
 
   <button
     class="btn slider__next"
-    disabled={activeIndex >= maxIndex}
-    on:click={handleNext}
+    disabled={disabledNext}
+    on:click={goToNextSlide}
   >
     <ChevronLeft ariaLabel="Next" rotate={180} />
     <span class="visually-hidden">Next</span>
