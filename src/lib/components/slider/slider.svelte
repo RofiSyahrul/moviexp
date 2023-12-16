@@ -11,8 +11,9 @@
     getRightSlidesAndRemoveThem,
     getSlidesWraper,
     getTotalSlides,
+    getWidth,
     useNavigateSlider,
-    useTotalSlides,
+    useSlider,
   } from './slider.hooks';
 
   const MIN_SLIDES_TO_REMOVE_ORIGINAL_SLIDE = 3;
@@ -25,20 +26,31 @@
 
   let translateX = '';
 
-  const { sliderContent, totalSlides, updateTotalSlides } =
-    useTotalSlides();
+  const { sliderContent, totalSlides, uid, updateTotalSlides } =
+    useSlider();
 
   const {
+    activeIndex,
     disabledTransition,
     goToNextSlide,
     goToPrevSlide,
-    offsetDecrement,
-    offsetIncrement,
     translationIndex,
-  } = useNavigateSlider();
+    updateOffset,
+  } = useNavigateSlider(uid);
 
   $: disabledNext = $translationIndex >= $totalSlides - 1;
   $: disabledPrev = $translationIndex <= 0;
+
+  function handleUpdateOffset(
+    slider: HTMLDivElement,
+    increment: number,
+  ) {
+    const translateX =
+      -($translationIndex + increment) * TRANSLATION_RATIO;
+    slider.style.transition = 'unset';
+    slider.style.transform = `translate3d(${translateX}%, 0, 0)`;
+    updateOffset(increment);
+  }
 
   const handleTouchStart: TouchEventHandler<
     HTMLDivElement
@@ -76,58 +88,70 @@
   const handleTransitionEnd: TransitionEventHandler<
     HTMLDivElement
   > = event => {
-    const sliderContent = event.currentTarget;
+    const slider = event.currentTarget;
 
-    const totalActualSlides = getTotalSlides(sliderContent);
+    const totalActualSlides = getTotalSlides(slider);
     if (totalActualSlides <= 1) return;
 
     totalSlides.set(totalActualSlides);
-    const isFirstSlide = $translationIndex === 0;
-    const isLastSlide = $translationIndex === totalActualSlides - 1;
 
-    if (!isFirstSlide && !isLastSlide) return;
+    const totalRightSlidesNeeded = 1 - $translationIndex;
+    const totalLeftSlidesNeeded =
+      $translationIndex - totalActualSlides + 2;
+
+    const isNeedRightSlides = totalRightSlidesNeeded > 0;
+    const isNeedLeftSlides = totalLeftSlidesNeeded > 0;
+
+    if (!isNeedRightSlides && !isNeedLeftSlides) return;
 
     const shouldRemoveOriginalSlide =
       totalActualSlides >= MIN_SLIDES_TO_REMOVE_ORIGINAL_SLIDE;
-    const sliderWidth = sliderContent.clientWidth;
 
-    const slidesWrapper = getSlidesWraper(sliderContent);
+    const sliderWidth = getWidth(slider);
+    const slidesWrapper = getSlidesWraper(slider);
     const slides = slidesWrapper.children;
 
     let rightSlides: Node[] = [];
     let leftSlides: Node[] = [];
 
-    if (isFirstSlide || !shouldRemoveOriginalSlide) {
+    if (isNeedRightSlides || !shouldRemoveOriginalSlide) {
+      let maxTotalWidthFactor =
+        totalRightSlidesNeeded % totalActualSlides;
+
+      if (maxTotalWidthFactor === 0) {
+        maxTotalWidthFactor = totalActualSlides;
+      }
+
       rightSlides = getRightSlidesAndRemoveThem(
         slides,
-        sliderWidth,
+        Math.max(sliderWidth, maxTotalWidthFactor * sliderWidth),
         shouldRemoveOriginalSlide,
       );
     }
 
-    if (isLastSlide || !shouldRemoveOriginalSlide) {
+    if (isNeedLeftSlides || !shouldRemoveOriginalSlide) {
+      let maxTotalWidthFactor =
+        totalLeftSlidesNeeded % totalActualSlides;
+
+      if (maxTotalWidthFactor === 0) {
+        maxTotalWidthFactor = totalActualSlides;
+      }
+
       leftSlides = getLeftSlidesAndRemoveThem(
         slides,
-        sliderWidth,
+        Math.max(sliderWidth, maxTotalWidthFactor * sliderWidth),
         shouldRemoveOriginalSlide,
       );
     }
 
     if (rightSlides.length > 0) {
-      const translateX = -($translationIndex + 1) * TRANSLATION_RATIO;
-      sliderContent.style.transition = 'unset';
-      sliderContent.style.transform = `translate3d(${translateX}%, 0, 0)`;
-      offsetIncrement();
+      handleUpdateOffset(slider, totalRightSlidesNeeded);
       slidesWrapper.prepend(...rightSlides);
     }
 
     if (leftSlides.length > 0) {
       if (shouldRemoveOriginalSlide) {
-        const translateX =
-          -($translationIndex - 1) * TRANSLATION_RATIO;
-        sliderContent.style.transition = 'unset';
-        sliderContent.style.transform = `translate3d(${translateX}%, 0, 0)`;
-        offsetDecrement();
+        handleUpdateOffset(slider, -totalLeftSlidesNeeded);
       }
 
       slidesWrapper.append(...leftSlides);
@@ -165,6 +189,7 @@
       on:touchend={handleTouchEnd}
       on:transitionend={handleTransitionEnd}
       class="slider__content"
+      data-active-index={$activeIndex}
       style:transform={`translateX(${translateX})`}
       style:transition={$disabledTransition ? 'unset' : undefined}
     >

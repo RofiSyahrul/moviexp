@@ -29,6 +29,9 @@ dependencies:
   sharp:
     specifier: ^0.32.6
     version: 0.32.6
+  superstruct:
+    specifier: ^1.0.3
+    version: 1.0.3
   ua-parser-js:
     specifier: ^1.0.36
     version: 1.0.36
@@ -9362,6 +9365,11 @@ packages:
     dependencies:
       postcss: 7.0.39
     dev: true
+
+  /superstruct@1.0.3:
+    resolution: {integrity: sha512-8iTn3oSS8nRGn+C2pgXSKPI3jmpm6FExNazNpjvqS6ZUJQCej3PUXEKM8NjHBOs54ExM+LPW/FBRhymrdcCiSg==}
+    engines: {node: '>=14.0.0'}
+    dev: false
 
   /supports-color@5.5.0:
     resolution: {integrity: sha512-QjVjwdXIt408MIiAqCX4oUKsgU2EqAGzs2Ppkm4aQYbjm+ZEWEcW4SfFNTr4uMNZma0ey4f5lgLrkB0aX0QMow==}

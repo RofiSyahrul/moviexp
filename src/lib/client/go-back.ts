@@ -1,23 +1,15 @@
 import { navigate } from 'astro:transitions/client';
 
-import { REFERRER } from '$lib/constants/custom-meta';
+import { getReferrerURL } from './referrer';
 
-function getURLOriginAndPathname(url: string) {
+function getURLOriginAndPathname(url: string | URL) {
   const urlObject = new URL(url, window.location.origin);
   return urlObject.origin + urlObject.pathname;
 }
 
 function getReferrerOriginAndPathname() {
-  let referrer = document.referrer;
-  const metaReferrer = document.querySelector<HTMLMetaElement>(
-    `meta[name="${REFERRER}"]`,
-  );
-  if (metaReferrer?.content) {
-    referrer = metaReferrer.content;
-  }
-
+  const referrer = getReferrerURL();
   if (!referrer) return null;
-
   return getURLOriginAndPathname(referrer);
 }
 

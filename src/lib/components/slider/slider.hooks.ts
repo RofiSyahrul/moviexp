@@ -1,14 +1,29 @@
 import { onMount } from 'svelte';
-import { derived, writable } from 'svelte/store';
+import { derived, writable, type Writable } from 'svelte/store';
+
+import { activeIndexStorage } from './slider.storage';
 
 export function getTotalSlides(sliderContent: HTMLDivElement) {
   const { clientWidth, scrollWidth } = sliderContent;
   return clientWidth > 0 ? Math.ceil(scrollWidth / clientWidth) : 0;
 }
 
-export function useTotalSlides() {
+function getAstroIsland(sliderContent: HTMLDivElement) {
+  let element: HTMLElement = sliderContent;
+  while (element.parentElement) {
+    element = element.parentElement;
+    if (element.tagName === 'ASTRO-ISLAND') {
+      return element;
+    }
+  }
+
+  return null;
+}
+
+export function useSlider() {
   let sliderContent: HTMLDivElement;
 
+  const uid = writable<string>();
   const sliderContentStore = writable<HTMLDivElement>();
   const totalSlides = writable(0);
 
@@ -22,19 +37,30 @@ export function useTotalSlides() {
     totalSlides.set(getTotalSlides(sliderContent));
   }
 
+  function setAstroIslandUID() {
+    const astroIsland = getAstroIsland(sliderContent);
+    const astroIslandUID = astroIsland?.getAttribute('uid');
+    if (astroIslandUID) uid.set(astroIslandUID);
+  }
+
   onMount(() => {
     updateTotalSlides();
+    setAstroIslandUID();
     return unsubscribeSliderContentStore;
   });
 
   return {
     sliderContent: sliderContentStore,
     totalSlides,
+    uid,
     updateTotalSlides,
   };
 }
 
-export function useNavigateSlider() {
+export function useNavigateSlider(uidStore: Writable<string>) {
+  let $uid: string;
+  let $activeIndex = 0;
+
   const activeIndex = writable(0);
   const translationOffsetIndex = writable(0);
   const disabledTransition = writable(false);
@@ -55,23 +81,52 @@ export function useNavigateSlider() {
     activeIndex.update(prev => prev - 1);
   }
 
-  function offsetIncrement() {
+  function updateOffset(increment: number) {
     disabledTransition.set(true);
-    translationOffsetIndex.update(prev => prev + 1);
+    translationOffsetIndex.update(prev => prev + increment);
   }
 
-  function offsetDecrement() {
-    disabledTransition.set(true);
-    translationOffsetIndex.update(prev => prev - 1);
-  }
+  const unsubscribeActiveIndexStore = activeIndex.subscribe(
+    newValue => {
+      $activeIndex = newValue;
+    },
+  );
+
+  const unsubscribeUIDStore = uidStore.subscribe(newValue => {
+    $uid = newValue;
+
+    if (!$uid) return;
+
+    const initialActiveIndex = activeIndexStorage.get($uid);
+    if (typeof initialActiveIndex === 'number') {
+      activeIndex.set(initialActiveIndex);
+    }
+  });
+
+  onMount(() => {
+    function storeActiveIndex() {
+      if ($uid) {
+        activeIndexStorage.set($uid, $activeIndex);
+      }
+    }
+
+    window.addEventListener('beforeunload', storeActiveIndex);
+
+    return () => {
+      unsubscribeActiveIndexStore();
+      unsubscribeUIDStore();
+      storeActiveIndex();
+      window.removeEventListener('beforeunload', storeActiveIndex);
+    };
+  });
 
   return {
+    activeIndex,
     disabledTransition,
     goToNextSlide,
     goToPrevSlide,
-    offsetDecrement,
-    offsetIncrement,
     translationIndex,
+    updateOffset,
   };
 }
 
@@ -83,9 +138,13 @@ export function getSlidesWraper(slider: HTMLElement) {
   return slider;
 }
 
+export function getWidth(element: Element) {
+  return element.getBoundingClientRect().width;
+}
+
 export function getRightSlidesAndRemoveThem(
   slides: HTMLCollection,
-  sliderWidth: number,
+  maxTotalWidth: number,
   shouldRemoveOriginalSlide: boolean,
 ) {
   let totalRightSlidesWidth = 0;
@@ -94,9 +153,9 @@ export function getRightSlidesAndRemoveThem(
 
   for (let index = totalActualSlides - 1; index >= 0; index--) {
     const rightSlide = slides[index];
-    totalRightSlidesWidth += rightSlide.clientWidth;
+    totalRightSlidesWidth += getWidth(rightSlide);
 
-    if (totalRightSlidesWidth > sliderWidth) break;
+    if (totalRightSlidesWidth > maxTotalWidth) break;
 
     rightSlides.unshift(rightSlide.cloneNode(true));
     if (shouldRemoveOriginalSlide) rightSlide.remove();
@@ -107,7 +166,7 @@ export function getRightSlidesAndRemoveThem(
 
 export function getLeftSlidesAndRemoveThem(
   slides: HTMLCollection,
-  sliderWidth: number,
+  maxTotalWidth: number,
   shouldRemoveOriginalSlide: boolean,
 ) {
   let index = 0;
@@ -116,9 +175,9 @@ export function getLeftSlidesAndRemoveThem(
 
   while (index < slides.length) {
     const leftSlide = slides[index];
-    totalLeftSlidesWidth += leftSlide.clientWidth;
+    totalLeftSlidesWidth += getWidth(leftSlide);
 
-    if (totalLeftSlidesWidth > sliderWidth) break;
+    if (totalLeftSlidesWidth > maxTotalWidth) break;
 
     leftSlides.push(leftSlide.cloneNode(true));
     if (shouldRemoveOriginalSlide) {
