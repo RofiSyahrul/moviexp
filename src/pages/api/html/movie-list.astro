@@ -1,0 +1,64 @@
+---
+import MovieCard from '$lib/components/movie-card/movie-card.astro';
+import {
+  fetchNowPlayingMovies,
+  type DiscoverMoviesQuery,
+  fetchPopularMovies,
+  fetchTrendingMovies,
+  fetchUpcomingMovies,
+} from '$lib/services/movie';
+import type { MovieListType, MovieOverview } from '$lib/types/movie';
+
+const trigger = Astro.request.headers.get('x-trigger');
+
+if (trigger !== 'infinite-list') {
+  return new Response(null, { status: 404 });
+}
+
+const DEFAULT_PAGE = 2;
+
+const VALID_LIST_TYPE = new Set<MovieListType>([
+  'now-playing',
+  'popular',
+  'trending',
+  'upcoming',
+]);
+
+const fetcherMapping: Record<
+  MovieListType,
+  (query?: DiscoverMoviesQuery) => Promise<MovieOverview[]>
+> = {
+  'now-playing': fetchNowPlayingMovies,
+  popular: fetchPopularMovies,
+  trending: fetchTrendingMovies,
+  upcoming: fetchUpcomingMovies,
+};
+
+const { searchParams } = Astro.url;
+
+const listType = searchParams.get('listType');
+if (!listType || !VALID_LIST_TYPE.has(listType)) {
+  return new Response(null, { status: 404 });
+}
+
+let page = parseInt(searchParams.get('page') ?? String(DEFAULT_PAGE));
+
+if (Number.isNaN(page) || page < DEFAULT_PAGE) {
+  page = DEFAULT_PAGE;
+}
+
+const fetchMovieList = fetcherMapping[listType];
+const movieList = await fetchMovieList({ page });
+
+if (movieList.length === 0) {
+  return new Response(null, { status: 200 });
+}
+---
+
+{
+  movieList.map(movie => (
+    <li>
+      <MovieCard isLazyImage {movie} />
+    </li>
+  ))
+}

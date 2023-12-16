@@ -1,8 +1,10 @@
 <script lang="ts">
   import goBack from '$lib/client/go-back';
 
+  export let backDestinations: string[] = [];
+
   function handleBackButtonClick() {
-    goBack('/');
+    goBack(...backDestinations);
   }
 </script>
 

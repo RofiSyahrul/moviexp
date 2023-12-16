@@ -1,6 +1,12 @@
 ---
 import { Image } from 'astro:assets';
 
+import {
+  MOVIE_LIST_NOW_PLAYING,
+  MOVIE_LIST_POPULAR,
+  MOVIE_LIST_TRENDING,
+  MOVIE_LIST_UPCOMING,
+} from '$lib/constants/internal-urls';
 import ArrowLeft from '$lib/icons/arrow-left.svelte';
 import GithubIcon from '$lib/images/github-icon.png';
 
@@ -8,10 +14,12 @@ import GithubIcon from '$lib/images/github-icon.png';
 import BackButton from './components/back-button.svelte';
 import SearchSummary from './components/search-summary.astro';
 
+type Variant = 'home' | 'detail' | 'filter-result-list';
+
 interface Props {
   title?: string;
   totalSearchResult?: number;
-  variant?: 'home' | 'detail';
+  variant?: Variant;
 }
 
 const {
@@ -21,6 +29,20 @@ const {
 } = Astro.props;
 
 const isHome = variant === 'home';
+
+const backDestinationsMapping: Record<Variant, string[]> = {
+  detail: [
+    '/',
+    MOVIE_LIST_TRENDING,
+    MOVIE_LIST_NOW_PLAYING,
+    MOVIE_LIST_UPCOMING,
+    MOVIE_LIST_POPULAR,
+  ],
+  'filter-result-list': ['/'],
+  home: [],
+};
+
+const backDestinations = backDestinationsMapping[variant];
 ---
 
 <div class='header-container'>
@@ -47,7 +69,7 @@ const isHome = variant === 'home';
               <span class='visually-hidden'>Repository</span>
             </a>
           ) : (
-            <BackButton client:load>
+            <BackButton {backDestinations} client:load>
               <ArrowLeft size={48} />
               <span class='visually-hidden'>Back</span>
             </BackButton>

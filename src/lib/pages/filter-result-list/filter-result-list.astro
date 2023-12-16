@@ -1,0 +1,72 @@
+---
+import Document from '$lib/_document.astro';
+import Header from '$lib/components/header/header.astro';
+import InfiniteList from '$lib/components/infinite-list/infinite-list.svelte';
+import MovieCard from '$lib/components/movie-card/movie-card.astro';
+
+import type { FilterResultListPageProps } from './filter-result-list.server';
+
+type Props = FilterResultListPageProps;
+
+const { movieList, movieListType, seoMeta } = Astro.props;
+
+const infiniteListEndpoint = `/api/html/movie-list?listType=${movieListType}`;
+---
+
+<Document {...seoMeta}>
+  <Header title={seoMeta.title} variant='filter-result-list' />
+
+  <InfiniteList
+    class='list-container'
+    component='main'
+    endpoint={infiniteListEndpoint}
+    selector='ol'
+    client:load
+  >
+    <ol>
+      {
+        movieList.map(movie => (
+          <li>
+            <MovieCard isLazyImage {movie} />
+          </li>
+        ))
+      }
+    </ol>
+  </InfiniteList>
+</Document>
+
+<style lang='scss'>
+  .list-container {
+    width: 100%;
+    padding: 16px var(--left-right-gutter);
+  }
+
+  ol {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    width: 100%;
+    max-width: var(--screen-size-xl);
+    margin: 0 auto;
+    list-style: none;
+  }
+
+  @include sm {
+    ol {
+      gap: 8px;
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @include lg {
+    ol {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  @include xl {
+    ol {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+</style>

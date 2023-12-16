@@ -12,22 +12,23 @@ interface MovieListResponse {
   results: MovieOverview[];
 }
 
-interface DiscoverMoviesQuery {
+export interface DiscoverMoviesQuery {
   include_adult?: boolean;
   include_video?: boolean;
   page?: number;
-  region?: 'ID';
+  region?: 'ID' | '';
   'release_date.gte'?: string;
   'release_date.lte'?: string;
   sort_by?: 'popularity.desc';
   with_release_type?: string;
 }
 
-export async function fetchTrendingMovies(): Promise<
-  MovieOverview[]
-> {
+export async function fetchTrendingMovies(
+  query?: DiscoverMoviesQuery,
+): Promise<MovieOverview[]> {
   try {
     const response = await fetcher<MovieListResponse>({
+      query,
       url: '/3/trending/movie/week',
     });
     return response.results;
@@ -64,37 +65,75 @@ function formatDate(dayjsObject: Dayjs) {
   return dayjsObject.format('YYYY-MM-DD');
 }
 
-export async function fetchNowPlayingMovies(): Promise<
-  MovieOverview[]
-> {
+function mergeMovieLists(
+  mainMovieList: MovieOverview[],
+  additionalMovieList: MovieOverview[],
+): MovieOverview[] {
+  const movieList = [...mainMovieList];
+  const movieListID = new Set(movieList.map(movie => movie.id));
+
+  for (const movie of additionalMovieList) {
+    if (!movieListID.has(movie.id)) {
+      movieList.push(movie);
+    }
+  }
+
+  return movieList;
+}
+
+export async function fetchNowPlayingMovies(
+  query?: DiscoverMoviesQuery,
+): Promise<MovieOverview[]> {
   const now = dayjs();
   const threeWeeksBefore = now.subtract(3, 'weeks');
 
-  return await fetchDiscoverMovies({
+  const commonQuery: DiscoverMoviesQuery = {
     'release_date.gte': formatDate(threeWeeksBefore),
     'release_date.lte': formatDate(now),
     sort_by: 'popularity.desc',
     with_release_type: '2|3',
-  });
+    ...query,
+  };
+
+  const [movieListInIndonesia, movieListInTheWorld] =
+    await Promise.all([
+      fetchDiscoverMovies({ ...commonQuery, region: 'ID' }),
+      fetchDiscoverMovies({ ...commonQuery, region: '' }),
+    ]);
+
+  return mergeMovieLists(movieListInIndonesia, movieListInTheWorld);
 }
 
-export async function fetchUpcomingMovies(): Promise<
-  MovieOverview[]
-> {
+export async function fetchUpcomingMovies(
+  query?: DiscoverMoviesQuery,
+): Promise<MovieOverview[]> {
   const now = dayjs();
   const oneDayAfter = now.add(1, 'days');
   const oneMonthAfter = now.add(30, 'days');
 
-  return await fetchDiscoverMovies({
+  const commonQuery: DiscoverMoviesQuery = {
     'release_date.gte': formatDate(oneDayAfter),
     'release_date.lte': formatDate(oneMonthAfter),
     sort_by: 'popularity.desc',
-  });
+    with_release_type: '2|3',
+    ...query,
+  };
+
+  const [movieListInIndonesia, movieListInTheWorld] =
+    await Promise.all([
+      fetchDiscoverMovies({ ...commonQuery, region: 'ID' }),
+      fetchDiscoverMovies({ ...commonQuery, region: '' }),
+    ]);
+
+  return mergeMovieLists(movieListInIndonesia, movieListInTheWorld);
 }
 
-export async function fetchPopularMovies(): Promise<MovieOverview[]> {
+export async function fetchPopularMovies(
+  query?: DiscoverMoviesQuery,
+): Promise<MovieOverview[]> {
   return await fetchDiscoverMovies({
     sort_by: 'popularity.desc',
+    ...query,
   });
 }
 

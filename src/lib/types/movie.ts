@@ -72,3 +72,9 @@ export interface MovieDetail extends MovieDetailFromResponse {
   slug: string;
   releaseYear: string | null;
 }
+
+export type MovieListType =
+  | 'trending'
+  | 'now-playing'
+  | 'upcoming'
+  | 'popular';

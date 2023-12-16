@@ -1,0 +1,10 @@
+---
+import FilterResultList from '$lib/pages/filter-result-list/filter-result-list.astro';
+import { createGetServerResponse } from '$lib/pages/filter-result-list/filter-result-list.server';
+
+const getServerResponse = createGetServerResponse('now-playing');
+const response = await getServerResponse(Astro);
+if (response instanceof Response) return response;
+---
+
+<FilterResultList {...response.props} />
