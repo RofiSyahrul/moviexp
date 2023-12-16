@@ -28,11 +28,25 @@ const {
   runtime,
 } = movieDetail;
 
+const isInfoAvailable = (info: string | null): info is string => {
+  return !!info;
+};
+
 const formattedReleaseDate = release_date
   ? dayjs(release_date).format('MMMM Do, YYYY')
   : null;
 
+const language = spoken_languages
+  .map(lang => lang.english_name)
+  .join(', ');
+
 const convertedRuntime = convertRuntime(runtime);
+
+const infoList = [
+  formattedReleaseDate,
+  language,
+  convertedRuntime,
+].filter(isInfoAvailable);
 ---
 
 <section
@@ -68,19 +82,11 @@ const convertedRuntime = convertRuntime(runtime);
       </div>
 
       {
-        (formattedReleaseDate || convertedRuntime) && (
-          <ul class='summary__bullet-list'>
-            {formattedReleaseDate && <li>{formattedReleaseDate}</li>}
-
-            {spoken_languages.length > 0 && (
-              <li>
-                {spoken_languages
-                  .map(lang => lang.english_name)
-                  .join(', ')}
-              </li>
-            )}
-
-            {convertedRuntime && <li>{convertedRuntime}</li>}
+        infoList.length > 0 && (
+          <ul class='summary__info-list'>
+            {infoList.map(info => (
+              <li>{info}</li>
+            ))}
           </ul>
         )
       }
@@ -183,7 +189,7 @@ const convertedRuntime = convertRuntime(runtime);
     margin: 8px 0 0;
   }
 
-  .summary__bullet-list {
+  .summary__info-list {
     margin-top: 4px;
 
     li {

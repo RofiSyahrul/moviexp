@@ -2,6 +2,7 @@
 import { ViewTransitions } from 'astro:transitions';
 
 import appConfig from './app.config';
+import { REFERRER } from './constants/custom-meta';
 import type { LiteralUnion, SEOMeta } from './types/general';
 
 interface LinkDescriptor {
@@ -90,6 +91,8 @@ const appleIconSizes = [
   '60',
   '57',
 ];
+
+const referrer = Astro.request.headers.get('referer');
 
 const links = appConfig.manifest.iconSizes
   .map<LinkDescriptor>(iconSize => ({
@@ -270,6 +273,8 @@ const links = appConfig.manifest.iconSizes
     />
 
     <meta name='keywords' content={keyword} />
+
+    {referrer && <meta name={REFERRER} content={referrer} />}
 
     {noIndex && <meta name='robots' content='noindex' />}
 

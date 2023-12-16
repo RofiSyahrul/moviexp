@@ -1,9 +1,11 @@
 ---
 import { Image } from 'astro:assets';
 
+import ArrowLeft from '$lib/icons/arrow-left.svelte';
 import GithubIcon from '$lib/images/github-icon.png';
 
 // import SearchBox from './components/search-box/search-box.svelte';
+import BackButton from './components/back-button.svelte';
 import SearchSummary from './components/search-summary.astro';
 
 interface Props {
@@ -17,14 +19,19 @@ const {
   totalSearchResult = 0,
   variant = 'home',
 } = Astro.props;
+
+const isHome = variant === 'home';
 ---
 
 <div class='header-container'>
-  <header data-search-box-shown='false'>
+  <header
+    data-search-box-shown='false'
+    class={isHome ? '' : 'header_with-back-btn'}
+  >
     <div class='header__inner'>
       <nav>
         {
-          variant === 'home' ? (
+          isHome ? (
             <a
               href={import.meta.env.REPOSITORY_URL}
               target='_blank'
@@ -40,16 +47,10 @@ const {
               <span class='visually-hidden'>Repository</span>
             </a>
           ) : (
-            <a href='/' title='Homepage'>
-              <Image
-                alt='Home'
-                loading='eager'
-                src='/icons/apple-touch-icon-114x114.png'
-                width={96}
-                height={96}
-              />
-              <span class='visually-hidden'>Home</span>
-            </a>
+            <BackButton client:load>
+              <ArrowLeft size={48} />
+              <span class='visually-hidden'>Back</span>
+            </BackButton>
           )
         }
       </nav>
@@ -107,6 +108,18 @@ const {
     width: var(--size);
     height: var(--size);
     transition: inherit;
+
+    :global(svg) {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  .header_with-back-btn nav {
+    position: absolute;
+    top: 50%;
+    left: 4px;
+    transform: translateY(-50%);
   }
 
   a {
