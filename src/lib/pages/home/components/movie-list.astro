@@ -5,15 +5,22 @@ import Slider from '$lib/components/slider/slider.svelte';
 import type { MovieOverview } from '$lib/types/movie';
 
 interface Props {
+  href: string;
   movieList: MovieOverview[];
   title: string;
 }
 
-const { movieList, title } = Astro.props;
+const { href, movieList, title } = Astro.props;
 ---
 
 <section>
-  <h2 class='font-semibold text-xl'>{title}</h2>
+  <h2 class='font-semibold text-xl'>
+    <a href={href}>
+      {title}
+      <span class='explore-all'>Explore All</span>
+    </a>
+  </h2>
+
   {
     movieList.length > 0 && (
       <Slider client:load>
@@ -27,7 +34,7 @@ const { movieList, title } = Astro.props;
   }
 </section>
 
-<style>
+<style lang='scss'>
   section {
     width: 100%;
     max-width: var(--screen-size-xl);
@@ -38,5 +45,33 @@ const { movieList, title } = Astro.props;
   h2 {
     margin: 0 0 8px;
     padding: 0 var(--left-right-gutter);
+
+    a {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      color: inherit;
+    }
+
+    .explore-all {
+      padding: 4px;
+      border-radius: 4px;
+      color: var(--color-neutral-05);
+      background-color: var(--color-green-50);
+    }
+  }
+
+  @media (hover: hover) {
+    h2 {
+      .explore-all {
+        opacity: 0;
+        overflow: hidden;
+        transition: opacity 0.3s ease-in;
+      }
+
+      a:hover .explore-all {
+        opacity: 1;
+      }
+    }
   }
 </style>

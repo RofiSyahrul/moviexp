@@ -1,6 +1,12 @@
 ---
 import Document from '$lib/_document.astro';
 import Header from '$lib/components/header/header.astro';
+import {
+  MOVIE_LIST_NOW_PLAYING,
+  MOVIE_LIST_POPULAR,
+  MOVIE_LIST_TRENDING,
+  MOVIE_LIST_UPCOMING,
+} from '$lib/constants/internal-urls';
 
 import MovieList from './components/movie-list.astro';
 import type { HomeProps } from './home.server';
@@ -20,11 +26,27 @@ const {
 
   <main>
     <MovieList
+      href={MOVIE_LIST_TRENDING}
       movieList={trendingMovies}
       title='Trending This Week'
     />
-    <MovieList movieList={nowPlayingMovies} title='Now Playing' />
-    <MovieList movieList={upcomingMovies} title='Upcoming' />
-    <MovieList movieList={popularMovies} title='Popular' />
+
+    <MovieList
+      href={MOVIE_LIST_NOW_PLAYING}
+      movieList={nowPlayingMovies}
+      title='Now Playing'
+    />
+
+    <MovieList
+      href={MOVIE_LIST_UPCOMING}
+      movieList={upcomingMovies}
+      title='Upcoming'
+    />
+
+    <MovieList
+      href={MOVIE_LIST_POPULAR}
+      movieList={popularMovies}
+      title='Popular'
+    />
   </main>
 </Document>
