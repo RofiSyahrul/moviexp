@@ -55,6 +55,7 @@ async function getBackdropURL(movieList: MovieOverview[]) {
   for (const movie of movieList) {
     if (movie.backdrop_path) {
       backdropPath = movie.backdrop_path;
+      break;
     }
   }
 
